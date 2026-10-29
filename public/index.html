@@ -360,7 +360,10 @@ const UI={
  schedNote:['已用官網確認（2026/10/29 查）：Skyliner 7:23、8:12（京成 11/21 新時刻表）；上野 9:26 Kagayaki、9:38 Hakutaka 每天行駛；長野 9:17 Kagayaki 504 → 上野 10:31、9:47 Hakutaka 556 → 11:14（JR 東日本 11 月時刻表）；Access 特急不停京成成田（成田機場官網）。還沒確認：長野抵達時間 10:44／11:03 來自駅探；Alpico 冬季時刻表還沒公布，巴士全部用去年冬季班次。JR 每年 3 月改點，2 月出發不受影響。','公式確認済み：スカイライナー（11/21新ダイヤ）、上野9:26・9:38発、長野9:17・9:47発、アクセス特急は京成成田に停車しない。未確認：長野着時刻、バス全便（冬ダイヤ未発表）。','Officially confirmed (Oct 29, 2026): Skyliner 7:23/8:12 (Keisei Nov 21 timetable); Ueno 9:26 Kagayaki and 9:38 Hakutaka run daily; Nagano 9:17 Kagayaki 504 → Ueno 10:31, 9:47 Hakutaka 556 → 11:14 (JR East); Access Express skips Keisei Narita (Narita Airport). Not yet confirmed: Nagano arrival times (third-party); all bus times (winter timetable not out).'],
  v_ok:['✅ 官網確認','✅ 公式確認','✅ Official'],v_part:['🟡 部分確認','🟡 一部確認','🟡 Partly checked'],v_tbc:['⚠️ 待官網確認','⚠️ 要確認','⚠️ To confirm'],
  back2:['← 返回行程','← 戻る','← Back'],
- whoAmI:['你是誰？','あなたは？','Who are you?'],meHint:['輸入名字，大家才看得到你的打勾和投票','名前を入れると共有されます','Add your name so others see your ticks and votes'],meHint2:['大家會看到這個名字','この名前で表示','Shown to the group'],namePh:['你的名字或暱稱','名前・ニックネーム','Name or nickname'],save:['儲存','保存','Save'],
+ whoAmI:['你是誰？','あなたは？','Who are you?'],
+ joinT:['團員請加入','メンバーは参加','Members: join in'],joinSub:['輸入群組裡的團員碼和你的名字，你的打勾和投票大家才看得到。家人朋友只想看行程，按下面「只是看看」就好。','メンバーコードと名前を入力。見るだけの方は下のボタンへ。','Enter the member code from the group chat and your name so your ticks and votes are shared. Family and friends just browsing: tap "Just looking".'],
+ codePh:['團員碼','メンバーコード','Member code'],join:['加入','参加','Join'],codeBad:['團員碼不對','コードが違います','Wrong code'],needName:['請輸入名字','名前を入力','Enter your name'],
+ justLook:['只是看看（家人朋友）','見るだけ（家族・友人）','Just looking (family & friends)'],viewerMode:['訪客模式：可以看全部行程，勾選只存在這支手機。','閲覧モード','Visitor mode: you can see everything; ticks stay on this phone.'],iAmMember:['我是團員，要加入','メンバーとして参加','I\'m in the group'],meHint:['輸入名字，大家才看得到你的打勾和投票','名前を入れると共有されます','Add your name so others see your ticks and votes'],meHint2:['大家會看到這個名字','この名前で表示','Shown to the group'],namePh:['你的名字或暱稱','名前・ニックネーム','Name or nickname'],save:['儲存','保存','Save'],
  adminLogin:['交通負責人登入（打勾用）','担当者ログイン','Organiser login (to tick items)'],unlock:['解鎖','解除','Unlock'],adminOn:['負責人模式：可以打勾交通任務和行前準備','担当者モード','Organiser mode: you can tick bookings and prep'],lock:['登出','ログアウト','Log out'],pinBad:['密碼不對','PINが違います','Wrong PIN'],
  tipLbl:['小提醒','ひとこと','Heads-up'],bye:['いってらっしゃい！楽しい雪の旅を ⛄','いってらっしゃい！楽しい雪の旅を ⛄','いってらっしゃい! Have a great snow trip ⛄'],
  srcLbl:['資料來源：','出典：','Sources: '],
@@ -678,7 +681,7 @@ function optsHTML(key){
   ${SYNC.db&&SYNC.crewOK?`<span class="small muted">${voters.length?`${U('votes',voters.length)}：${voters.map(id=>esc(who(id))).join('、')}`:''}</span>`:''}</div>
  </div>`}).join('')}</div>
  ${L(g.note)?`<p class="small muted">${esc(L(g.note))}</p>`:''}
- <p class="small muted">${SYNC.db&&SYNC.crewOK?U('voteSync'):U('voteLocal')}</p></div>`;
+ <p class="small muted">${SYNC.db&&SYNC.crewOK&&!(SYNC.mode==='cf'&&!CF.code)?U('voteSync'):U('voteLocal')}</p></div>`;
 }
 function openOpts(key){const el=document.getElementById('guide');el.innerHTML=optsHTML(key);el.hidden=false;el.scrollTop=0;el.dataset.o=key;delete el.dataset.g}
 
@@ -722,7 +725,7 @@ const HELP=[
  ['🇯🇵',['日文小抄給店員看','日本語メモ','Show Japanese phrases to staff'],['虛線框的日文句子點一下會全螢幕放大，直接拿手機給店員、站務員、司機看。總覽頁有分類整理。','タップで全画面表示。','Tap a dashed-border phrase to show it full-screen to staff or drivers. The Overview page has them all by category.']],
  ['💱',['右下角黃色圓形＝匯率換算','右下＝為替換算','Bottom-right yellow circle = currency'],['輸入日圓馬上換成台幣，反過來也可以。匯率可以自己改。','円⇄台湾ドル。','Yen ⇄ NT$, both ways. You can edit the rate.']],
  ['🌐',['中／日／英切換','言語切替','Switch language'],['右上角切換語言。中文和英文版會附日文小抄，日文版不會重複顯示。','右上で切替。','Top-right. Chinese and English versions include the Japanese phrase cards.']],
- ['🔄',['大家的打勾、賓果、投票會同步','チェック・投票は全員に共有','Ticks, bingo and votes are shared'],['先在簡易頁最上面輸入你的名字，之後你的出門清單、賓果和投票，大家都看得到（約 20 秒更新一次）。交通任務和行前準備只有負責人用密碼登入後才能打勾。','最初に名前を入力。約20秒ごとに更新。','Enter your name at the top of the Simple page; your packing, bingo and votes are then shared (refreshes about every 20 s). Only the organiser, with a PIN, can tick bookings and prep.']],
+ ['🔄',['大家的打勾、賓果、投票會同步','チェック・投票は全員に共有','Ticks, bingo and votes are shared'],['團員：在簡易頁最上面輸入群組裡的「團員碼」和名字，按加入，你的出門清單、賓果和投票大家就看得到（約 20 秒更新）。家人朋友按「只是看看」就能看全部行程。交通任務和行前準備只有負責人用密碼才能打勾。','メンバーはコードと名前で参加。家族・友人は「見るだけ」。','Members: enter the member code from the group chat and your name, then Join; your packing, bingo and votes are shared (refreshes about every 20 s). Family and friends tap "Just looking". Only the organiser, with a PIN, ticks bookings and prep.']],
  ['📲',['建議加到手機主畫面','ホーム画面に追加','Add it to your home screen'],['從 LINE 點開後，選「用瀏覽器開啟」（Safari 或 Chrome），再用分享選單「加入主畫面」，之後就像 App 一樣一點就開。','ブラウザで開いてホーム画面に追加。','Open the link in Safari or Chrome (not inside LINE), then use Share → Add to Home Screen. It opens like an app.']]
 ];
 function helpHTML(){
@@ -978,13 +981,14 @@ let pendingMine=null,writingMine=false;
 function saveMine(s){
  store.set('mine',s);
  if(!(SYNC.db&&SYNC.me&&SYNC.crewOK))return;
+ if(SYNC.mode==='cf'&&!CF.code)return;
  SYNC.crew[SYNC.me]={...s,at:Date.now()};
  pendingMine={pack:s.pack,bingo:s.bingo,votes:s.votes||{},at:Date.now()};flushMine();
 }
 async function flushMine(){
  if(writingMine)return;writingMine=true;
  while(pendingMine){const p=pendingMine;pendingMine=null;
-  if(SYNC.mode==='cf'){try{const r=await fetch('/api/me',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({id:SYNC.me,name:CF.name,...p})});if(!r.ok&&r.status!==500){SYNC.crewOK=false;render()}}catch(e){}if(!pendingMine)cfPull();continue}
+  if(SYNC.mode==='cf'){try{const r=await fetch('/api/me',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({id:SYNC.me,name:CF.name,code:CF.code,...p})});if(r.status===403){CF.code='';store.set('code','');render()}}catch(e){}if(!pendingMine)cfPull();continue}
   try{await SYNC.db.doc('crew/'+SYNC.me).set(p)}catch(e){if(e&&(e.code==='invalid_argument'||e.code==='not_granted'||e.code==='revoked')){SYNC.crewOK=false;pendingMine=null;render()}}}
  writingMine=false;
 }
@@ -1004,7 +1008,7 @@ function refreshNames(){
 }
 const who=id=>{const p=SYNC.names[id];return (p&&p.name)||(id===SYNC.me?U('you'):U('someone'))};
 let renderTimer=null;const soon=()=>{clearTimeout(renderTimer);renderTimer=setTimeout(render,120)};
-const CF={name:'',pin:'',sig:''};
+const CF={name:'',pin:'',sig:'',code:'',viewer:false};
 function newId(){try{return crypto.randomUUID().toLowerCase()}catch(e){return 'id-'+Math.random().toString(36).slice(2)+Date.now().toString(36)}}
 async function cfPull(force){
  CF.last=Date.now();
@@ -1020,12 +1024,12 @@ async function cfPull(force){
 }
 async function cfInit(){
  let me=store.get('me',null);if(!me||!me.id){me={id:newId(),name:''};store.set('me',me)}
- CF.name=me.name||'';CF.pin=store.get('pin','')||'';
+ CF.name=me.name||'';CF.pin=store.get('pin','')||'';CF.code=store.get('code','')||'';CF.viewer=!!store.get('viewer',false);
  SYNC.mode='cf';SYNC.db={cf:true};SYNC.me=me.id;SYNC.crewOK=true;
  const ok=await cfPull(true);
  if(!ok){SYNC.mode=null;SYNC.db=null;SYNC.crewOK=false;render();return}
  if(CF.pin){try{const r=await fetch('/api/admin',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({pin:CF.pin})});const j=await r.json();SYNC.canTasks=!!j.ok;if(!j.ok){CF.pin='';store.set('pin','')}}catch(e){}}
- if(!SYNC.crew[SYNC.me]){const loc=store.get('mine',null);if(loc&&(Object.keys(loc.pack||{}).length||Object.keys(loc.bingo||{}).length||Object.keys(loc.votes||{}).length))saveMine(loc)}
+ if(CF.code&&!SYNC.crew[SYNC.me]){const loc=store.get('mine',null);if(loc&&(Object.keys(loc.pack||{}).length||Object.keys(loc.bingo||{}).length||Object.keys(loc.votes||{}).length))saveMine(loc)}
  render();
  setInterval(()=>{if(document.visibilityState==='visible')cfPull()},20000);
  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')cfPull()});
@@ -1041,8 +1045,17 @@ async function cfUnlock(pin){
 }
 function meCard(){
  if(SYNC.mode!=='cf')return '';
- const named=!!CF.name;
- return `<div class="card mecard${named?'':' need'}"><label for="meName"><b>👤 ${U('whoAmI')}</b> <span class="small muted">${named?U('meHint2'):U('meHint')}</span></label><div class="links"><input id="meName" type="text" maxlength="20" value="${esc(CF.name)}" placeholder="${U('namePh')}"><button class="btn sm d" type="button" id="meSave">${U('save')}</button></div></div>`;
+ if(CF.code){const named=!!CF.name;
+  return `<div class="card mecard${named?'':' need'}"><label for="meName"><b>👤 ${U('whoAmI')}</b> <span class="small muted">${named?U('meHint2'):U('meHint')}</span></label><div class="links"><input id="meName" type="text" maxlength="20" value="${esc(CF.name)}" placeholder="${U('namePh')}"><button class="btn sm d" type="button" id="meSave">${U('save')}</button></div></div>`}
+ if(CF.viewer)return `<div class="small muted" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">👀 ${U('viewerMode')} <button class="btn sm" type="button" id="iAmMember">${U('iAmMember')}</button></div>`;
+ return `<div class="card mecard need"><b>👋 ${U('joinT')}</b><span class="small muted">${U('joinSub')}</span>
+  <div class="links"><input id="joinCode" type="text" autocomplete="off" placeholder="${U('codePh')}" aria-label="${U('codePh')}"><input id="meName" type="text" maxlength="20" value="${esc(CF.name)}" placeholder="${U('namePh')}"><button class="btn sm d" type="button" id="joinGo">${U('join')}</button></div><span class="small" id="joinMsg" style="color:var(--red)"></span>
+  <div><button class="btn sm" type="button" id="justLook">👀 ${U('justLook')}</button></div></div>`;
+}
+async function cfJoin(code,name){
+ try{const r=await fetch('/api/join',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({code})});const j=await r.json();
+  if(!j.ok)return false;CF.code=String(code).trim();store.set('code',CF.code);CF.viewer=false;store.set('viewer',false);
+  await cfSaveName(name);return true}catch(e){return false}
 }
 function adminBox(){
  if(SYNC.mode!=='cf')return '';
@@ -1145,7 +1158,7 @@ function statusCard(dayFilter){
 }
 
 function syncNote(tasks){
- const on=SYNC.db&&(tasks||SYNC.crewOK);
+ const on=SYNC.db&&(tasks||(SYNC.crewOK&&!(SYNC.mode==='cf'&&!CF.code)));
  let t=on?U('syncOn'):U('syncLocal');
  if(on&&tasks)t+=' · '+(SYNC.canTasks?U('syncOwner'):U('syncRead'));
  return `<div class="small muted" style="font-weight:700">${t}</div>`;
@@ -1329,6 +1342,9 @@ document.addEventListener('click',e=>{
  const gb=e.target.closest('[data-guide]');if(gb){openGuide(gb.dataset.guide);return}
  if(e.target.closest('#helpBtn')){openHelp();return}
  if(e.target.closest('#meSave')){cfSaveName(document.getElementById('meName').value);return}
+ if(e.target.closest('#joinGo')){const c=document.getElementById('joinCode').value,n=document.getElementById('meName').value;if(!n.trim()){document.getElementById('joinMsg').textContent=U('needName');return}cfJoin(c,n).then(ok=>{if(!ok){const m=document.getElementById('joinMsg');if(m)m.textContent=U('codeBad')}});return}
+ if(e.target.closest('#justLook')){CF.viewer=true;store.set('viewer',true);render();return}
+ if(e.target.closest('#iAmMember')){CF.viewer=false;store.set('viewer',false);render();return}
  if(e.target.closest('.pinGo')){const row=e.target.closest('.pinrow');const v=row.querySelector('.pinIn').value;cfUnlock(v).then(ok=>{if(!ok){const m=row.querySelector('.pinMsg');if(m)m.textContent=U('pinBad')}});return}
  if(e.target.closest('.adminOff')){CF.pin='';store.set('pin','');SYNC.canTasks=false;render();return}
  if(e.target.closest('#copyHelp')){const txt='📖 白馬滑雪團網站 使用說明\n\n'+HELP.map((x,i)=>`${x[0]} ${x[1][0]}\n${x[2][0]}`).join('\n\n');const ta=document.getElementById('helpText');ta.value=txt;const msg=document.getElementById('helpMsg');const fb=()=>{ta.hidden=false;ta.focus();ta.select();msg.textContent=U('copyFail')};try{navigator.clipboard.writeText(txt).then(()=>{msg.textContent=U('copied')},fb)}catch(x){fb()}return}
@@ -1353,7 +1369,8 @@ document.addEventListener('click',e=>{
 function toggleTi(card){const ti=card.closest('.ti');ti.classList.toggle('open');card.setAttribute('aria-expanded',ti.classList.contains('open'))}
 document.addEventListener('keydown',e=>{
  if(e.key==='Escape'){document.getElementById('ov').hidden=true;document.getElementById('guide').hidden=true;document.getElementById('fx').hidden=true}
- if(e.key==='Enter'&&e.target.id==='meName'){cfSaveName(e.target.value);return}
+ if(e.key==='Enter'&&e.target.id==='meName'&&CF.code){cfSaveName(e.target.value);return}
+ if(e.key==='Enter'&&(e.target.id==='joinCode'||e.target.id==='meName')&&!CF.code){document.getElementById('joinGo')?.click();return}
  if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('pinIn')){e.target.closest('.pinrow').querySelector('.pinGo').click();return}
  if((e.key==='Enter'||e.key===' ')&&e.target.matches('.ti .card')){e.preventDefault();toggleTi(e.target)}
 });

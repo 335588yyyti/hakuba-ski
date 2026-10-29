@@ -2,6 +2,7 @@
 // Bindings (set in the Pages project settings):
 //   DB        -> D1 database
 //   ADMIN_PIN -> secret; the organiser's PIN for ticking bookings / prep items
+//   MEMBER_CODE -> secret; participants enter it once to save ticks/votes (viewers just read)
 
 const MAX_CREW = 40;          // cap rows so a public URL can't be flooded
 const MAX_BODY = 30000;       // bytes per request
@@ -26,6 +27,12 @@ async function readBody(request) {
   return JSON.parse(text || '{}');
 }
 
+function codeOk(env, code) {
+  // If MEMBER_CODE isn't configured, anyone may join (backwards compatible).
+  if (typeof env.MEMBER_CODE !== 'string' || env.MEMBER_CODE.length === 0) return true;
+  return String(code || '').trim() === env.MEMBER_CODE;
+}
+
 function pinOk(env, pin) {
   return typeof env.ADMIN_PIN === 'string' && env.ADMIN_PIN.length > 0 && pin === env.ADMIN_PIN;
 }
@@ -46,8 +53,14 @@ export async function onRequest({ request, env, params }) {
       });
     }
 
+    if (request.method === 'POST' && route === 'join') {
+      const b = await readBody(request);
+      return json({ ok: codeOk(env, b.code) });
+    }
+
     if (request.method === 'POST' && route === 'me') {
       const b = await readBody(request);
+      if (!codeOk(env, b.code)) return json({ error: 'bad_code' }, 403);
       if (!ID_RE.test(b.id || '')) return json({ error: 'bad_id' }, 400);
       const name = String(b.name || '').slice(0, 20);
       const data = JSON.stringify({ pack: b.pack || {}, bingo: b.bingo || {}, votes: b.votes || {} });
@@ -82,6 +95,7 @@ export async function onRequest({ request, env, params }) {
 
     if (request.method === 'POST' && route === 'forget') {
       const b = await readBody(request);
+      if (!codeOk(env, b.code)) return json({ error: 'bad_code' }, 403);
       if (!ID_RE.test(b.id || '')) return json({ error: 'bad_id' }, 400);
       await env.DB.prepare('DELETE FROM crew WHERE id = ?').bind(b.id).run();
       return json({ ok: true });
