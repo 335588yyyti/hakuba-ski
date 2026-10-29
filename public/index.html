@@ -250,6 +250,7 @@ tr.total td{font-weight:900;border-bottom:0}
 .bye{font-family:"Noto Sans JP",var(--f-display);font-weight:900;font-size:clamp(24px,7vw,40px);color:var(--red);text-align:center;margin-top:20px;text-wrap:balance}
 .srcs{line-height:1.9;max-width:60em;margin:0 auto}
 .srcs a{color:var(--ink)}
+.onlynote{background:var(--warnbg);color:var(--ink);border:2px solid var(--warn);border-radius:10px;padding:6px 10px;font-size:14px;font-weight:700}
 .mecard{display:flex;flex-direction:column;gap:8px}
 .mecard.need{box-shadow:0 6px 0 var(--line),0 0 0 5px color-mix(in srgb,var(--red) 45%,transparent)}
 .mecard input,.pinIn{font:inherit;border:3px solid var(--line);border-radius:12px;padding:6px 10px;background:var(--card2);color:var(--ink);min-width:0;flex:1}
@@ -361,9 +362,9 @@ const UI={
  v_ok:['✅ 官網確認','✅ 公式確認','✅ Official'],v_part:['🟡 部分確認','🟡 一部確認','🟡 Partly checked'],v_tbc:['⚠️ 待官網確認','⚠️ 要確認','⚠️ To confirm'],
  back2:['← 返回行程','← 戻る','← Back'],
  whoAmI:['你是誰？','あなたは？','Who are you?'],
- joinT:['團員請加入','メンバーは参加','Members: join in'],joinSubOpen:['團員輸入名字按加入，打勾和投票大家就看得到。家人朋友只想看行程，按下面「只是看看」就好。','メンバーは名前を入力。見るだけの方は下のボタンへ。','Members: enter your name and Join so your ticks and votes are shared. Just browsing? Tap "Just looking".'],joinSub:['輸入群組裡的團員碼和你的名字，你的打勾和投票大家才看得到。家人朋友只想看行程，按下面「只是看看」就好。','メンバーコードと名前を入力。見るだけの方は下のボタンへ。','Enter the member code from the group chat and your name so your ticks and votes are shared. Family and friends just browsing: tap "Just looking".'],
+ joinT:['團員請加入','メンバーは参加','Members: join in'],onlyMembers:['只有參加這趟的 12 位團員才按「加入」。家人朋友請按「只是看看」，一樣可以看全部行程。','「参加」はツアーの12名のみ。家族・友人は「見るだけ」を押してください。','Only the 12 people on this trip should tap "Join". Family and friends, please tap "Just looking"; you can still see everything.'],joinSubOpen:['輸入名字按加入，你的打勾和投票大家就看得到。','名前を入れて参加すると、チェックと投票が共有されます。','Enter your name and Join; your ticks and votes are then shared.'],joinSub:['輸入群組裡的團員碼和你的名字，你的打勾和投票大家才看得到。家人朋友只想看行程，按下面「只是看看」就好。','メンバーコードと名前を入力。見るだけの方は下のボタンへ。','Enter the member code from the group chat and your name so your ticks and votes are shared. Family and friends just browsing: tap "Just looking".'],
  codePh:['團員碼','メンバーコード','Member code'],join:['加入','参加','Join'],codeBad:['團員碼不對','コードが違います','Wrong code'],needName:['請輸入名字','名前を入力','Enter your name'],
- justLook:['只是看看（家人朋友）','見るだけ（家族・友人）','Just looking (family & friends)'],viewerMode:['訪客模式：可以看全部行程，勾選只存在這支手機。','閲覧モード','Visitor mode: you can see everything; ticks stay on this phone.'],iAmMember:['我是團員，要加入','メンバーとして参加','I\'m in the group'],meHint:['輸入名字，大家才看得到你的打勾和投票','名前を入れると共有されます','Add your name so others see your ticks and votes'],meHint2:['大家會看到這個名字','この名前で表示','Shown to the group'],namePh:['你的名字或暱稱','名前・ニックネーム','Name or nickname'],save:['儲存','保存','Save'],
+ justLook:['只是看看（家人朋友）','見るだけ（家族・友人）','Just looking (family & friends)'],viewerMode:['訪客模式（非團員只能看）：可以看全部行程，勾選只存在這支手機。','閲覧モード','Visitor mode: you can see everything; ticks stay on this phone.'],iAmMember:['我是團員，要加入','メンバーとして参加','I\'m in the group'],meHint:['輸入名字，大家才看得到你的打勾和投票','名前を入れると共有されます','Add your name so others see your ticks and votes'],meHint2:['大家會看到這個名字','この名前で表示','Shown to the group'],namePh:['你的名字或暱稱','名前・ニックネーム','Name or nickname'],save:['儲存','保存','Save'],
  adminLogin:['交通負責人登入（打勾用）','担当者ログイン','Organiser login (to tick items)'],unlock:['解鎖','解除','Unlock'],adminOn:['負責人模式：可以打勾交通任務和行前準備','担当者モード','Organiser mode: you can tick bookings and prep'],lock:['登出','ログアウト','Log out'],pinBad:['密碼不對','PINが違います','Wrong PIN'],
  tipLbl:['小提醒','ひとこと','Heads-up'],bye:['いってらっしゃい！楽しい雪の旅を ⛄','いってらっしゃい！楽しい雪の旅を ⛄','いってらっしゃい! Have a great snow trip ⛄'],
  srcLbl:['資料來源：','出典：','Sources: '],
@@ -701,7 +702,7 @@ function lineSummary(){
  WHY.forEach((w,i)=>{t+=`${i+1}. ${z(w[0])}：${z(w[1])}\n`});
  t+='\n【交通任務】\n';
  TASKS.forEach(k=>{const st=taskState(k);t+=`${st.k==='done'?'✅':'⬜'} ${z(k.t)}（${st.txt}）\n`});
- t+='\n完整行程、轉乘指引、方案投票都在網站上，請點連結看 👇';
+ t+='\n完整行程、轉乘指引、方案投票都在網站上，請點連結看 👇\n⚠️ 團員打開後輸入名字按「加入」；家人朋友請按「只是看看」（非團員只能看）。';
  return t;
 }
 
@@ -1048,7 +1049,7 @@ function meCard(){
  if(CF.code){const named=!!CF.name;
   return `<div class="card mecard${named?'':' need'}"><label for="meName"><b>👤 ${U('whoAmI')}</b> <span class="small muted">${named?U('meHint2'):U('meHint')}</span></label><div class="links"><input id="meName" type="text" maxlength="20" value="${esc(CF.name)}" placeholder="${U('namePh')}"><button class="btn sm d" type="button" id="meSave">${U('save')}</button></div></div>`}
  if(CF.viewer)return `<div class="small muted" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">👀 ${U('viewerMode')} <button class="btn sm" type="button" id="iAmMember">${U('iAmMember')}</button></div>`;
- return `<div class="card mecard need"><b>👋 ${U('joinT')}</b><span class="small muted">${CF.needCode?U('joinSub'):U('joinSubOpen')}</span>
+ return `<div class="card mecard need"><b>👋 ${U('joinT')}</b><div class="onlynote">⚠️ ${U('onlyMembers')}</div><span class="small muted">${CF.needCode?U('joinSub'):U('joinSubOpen')}</span>
   <div class="links">${CF.needCode?`<input id="joinCode" type="text" autocomplete="off" placeholder="${U('codePh')}" aria-label="${U('codePh')}">`:''}<input id="meName" type="text" maxlength="20" value="${esc(CF.name)}" placeholder="${U('namePh')}"><button class="btn sm d" type="button" id="joinGo">${U('join')}</button></div><span class="small" id="joinMsg" style="color:var(--red)"></span>
   <div><button class="btn sm" type="button" id="justLook">👀 ${U('justLook')}</button></div></div>`;
 }
@@ -1347,7 +1348,7 @@ document.addEventListener('click',e=>{
  if(e.target.closest('#iAmMember')){CF.viewer=false;store.set('viewer',false);render();return}
  if(e.target.closest('.pinGo')){const row=e.target.closest('.pinrow');const v=row.querySelector('.pinIn').value;cfUnlock(v).then(ok=>{if(!ok){const m=row.querySelector('.pinMsg');if(m)m.textContent=U('pinBad')}});return}
  if(e.target.closest('.adminOff')){CF.pin='';store.set('pin','');SYNC.canTasks=false;render();return}
- if(e.target.closest('#copyHelp')){const txt='📖 白馬滑雪團網站 使用說明\n\n'+HELP.map((x,i)=>`${x[0]} ${x[1][0]}\n${x[2][0]}`).join('\n\n');const ta=document.getElementById('helpText');ta.value=txt;const msg=document.getElementById('helpMsg');const fb=()=>{ta.hidden=false;ta.focus();ta.select();msg.textContent=U('copyFail')};try{navigator.clipboard.writeText(txt).then(()=>{msg.textContent=U('copied')},fb)}catch(x){fb()}return}
+ if(e.target.closest('#copyHelp')){const txt='📖 白馬滑雪團網站 使用說明\n⚠️ 團員輸入名字按「加入」；家人朋友請按「只是看看」（非團員只能看）。\n\n'+HELP.map((x,i)=>`${x[0]} ${x[1][0]}\n${x[2][0]}`).join('\n\n');const ta=document.getElementById('helpText');ta.value=txt;const msg=document.getElementById('helpMsg');const fb=()=>{ta.hidden=false;ta.focus();ta.select();msg.textContent=U('copyFail')};try{navigator.clipboard.writeText(txt).then(()=>{msg.textContent=U('copied')},fb)}catch(x){fb()}return}
  if(e.target.closest('#copyLine')){const txt=lineSummary();const ta=document.getElementById('lineText');ta.value=txt;const msg=document.getElementById('copyMsg');
   const fallback=()=>{ta.hidden=false;ta.focus();ta.select();msg.textContent=U('copyFail')};
   try{navigator.clipboard.writeText(txt).then(()=>{msg.textContent=U('copied')},fallback)}catch(x){fallback()}return}
