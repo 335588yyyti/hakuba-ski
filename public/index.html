@@ -361,7 +361,7 @@ const UI={
  v_ok:['✅ 官網確認','✅ 公式確認','✅ Official'],v_part:['🟡 部分確認','🟡 一部確認','🟡 Partly checked'],v_tbc:['⚠️ 待官網確認','⚠️ 要確認','⚠️ To confirm'],
  back2:['← 返回行程','← 戻る','← Back'],
  whoAmI:['你是誰？','あなたは？','Who are you?'],
- joinT:['團員請加入','メンバーは参加','Members: join in'],joinSub:['輸入群組裡的團員碼和你的名字，你的打勾和投票大家才看得到。家人朋友只想看行程，按下面「只是看看」就好。','メンバーコードと名前を入力。見るだけの方は下のボタンへ。','Enter the member code from the group chat and your name so your ticks and votes are shared. Family and friends just browsing: tap "Just looking".'],
+ joinT:['團員請加入','メンバーは参加','Members: join in'],joinSubOpen:['團員輸入名字按加入，打勾和投票大家就看得到。家人朋友只想看行程，按下面「只是看看」就好。','メンバーは名前を入力。見るだけの方は下のボタンへ。','Members: enter your name and Join so your ticks and votes are shared. Just browsing? Tap "Just looking".'],joinSub:['輸入群組裡的團員碼和你的名字，你的打勾和投票大家才看得到。家人朋友只想看行程，按下面「只是看看」就好。','メンバーコードと名前を入力。見るだけの方は下のボタンへ。','Enter the member code from the group chat and your name so your ticks and votes are shared. Family and friends just browsing: tap "Just looking".'],
  codePh:['團員碼','メンバーコード','Member code'],join:['加入','参加','Join'],codeBad:['團員碼不對','コードが違います','Wrong code'],needName:['請輸入名字','名前を入力','Enter your name'],
  justLook:['只是看看（家人朋友）','見るだけ（家族・友人）','Just looking (family & friends)'],viewerMode:['訪客模式：可以看全部行程，勾選只存在這支手機。','閲覧モード','Visitor mode: you can see everything; ticks stay on this phone.'],iAmMember:['我是團員，要加入','メンバーとして参加','I\'m in the group'],meHint:['輸入名字，大家才看得到你的打勾和投票','名前を入れると共有されます','Add your name so others see your ticks and votes'],meHint2:['大家會看到這個名字','この名前で表示','Shown to the group'],namePh:['你的名字或暱稱','名前・ニックネーム','Name or nickname'],save:['儲存','保存','Save'],
  adminLogin:['交通負責人登入（打勾用）','担当者ログイン','Organiser login (to tick items)'],unlock:['解鎖','解除','Unlock'],adminOn:['負責人模式：可以打勾交通任務和行前準備','担当者モード','Organiser mode: you can tick bookings and prep'],lock:['登出','ログアウト','Log out'],pinBad:['密碼不對','PINが違います','Wrong PIN'],
@@ -1017,7 +1017,7 @@ async function cfPull(force){
   const c={},n={};(st.crew||[]).forEach(x=>{c[x.id]={...x.data,at:x.at};n[x.id]={name:x.name||''}});
   if(SYNC.me&&!c[SYNC.me]&&SYNC.crew[SYNC.me])c[SYNC.me]=SYNC.crew[SYNC.me];
   if(SYNC.me&&CF.name)n[SYNC.me]={name:CF.name};
-  SYNC.crew=c;SYNC.names=n;SYNC.tasks=st.tasks||{};
+  SYNC.crew=c;SYNC.names=n;SYNC.tasks=st.tasks||{};CF.needCode=!!st.codeRequired;
   const ae=document.activeElement;if(ae&&ae.matches&&ae.matches('input,textarea')&&document.getElementById('main').contains(ae))return true;
   render();return true;
  }catch(e){return false}
@@ -1048,13 +1048,13 @@ function meCard(){
  if(CF.code){const named=!!CF.name;
   return `<div class="card mecard${named?'':' need'}"><label for="meName"><b>👤 ${U('whoAmI')}</b> <span class="small muted">${named?U('meHint2'):U('meHint')}</span></label><div class="links"><input id="meName" type="text" maxlength="20" value="${esc(CF.name)}" placeholder="${U('namePh')}"><button class="btn sm d" type="button" id="meSave">${U('save')}</button></div></div>`}
  if(CF.viewer)return `<div class="small muted" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">👀 ${U('viewerMode')} <button class="btn sm" type="button" id="iAmMember">${U('iAmMember')}</button></div>`;
- return `<div class="card mecard need"><b>👋 ${U('joinT')}</b><span class="small muted">${U('joinSub')}</span>
-  <div class="links"><input id="joinCode" type="text" autocomplete="off" placeholder="${U('codePh')}" aria-label="${U('codePh')}"><input id="meName" type="text" maxlength="20" value="${esc(CF.name)}" placeholder="${U('namePh')}"><button class="btn sm d" type="button" id="joinGo">${U('join')}</button></div><span class="small" id="joinMsg" style="color:var(--red)"></span>
+ return `<div class="card mecard need"><b>👋 ${U('joinT')}</b><span class="small muted">${CF.needCode?U('joinSub'):U('joinSubOpen')}</span>
+  <div class="links">${CF.needCode?`<input id="joinCode" type="text" autocomplete="off" placeholder="${U('codePh')}" aria-label="${U('codePh')}">`:''}<input id="meName" type="text" maxlength="20" value="${esc(CF.name)}" placeholder="${U('namePh')}"><button class="btn sm d" type="button" id="joinGo">${U('join')}</button></div><span class="small" id="joinMsg" style="color:var(--red)"></span>
   <div><button class="btn sm" type="button" id="justLook">👀 ${U('justLook')}</button></div></div>`;
 }
 async function cfJoin(code,name){
  try{const r=await fetch('/api/join',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({code})});const j=await r.json();
-  if(!j.ok)return false;CF.code=String(code).trim();store.set('code',CF.code);CF.viewer=false;store.set('viewer',false);
+  if(!j.ok)return false;CF.code=String(code||'').trim()||'open';store.set('code',CF.code);CF.viewer=false;store.set('viewer',false);
   await cfSaveName(name);return true}catch(e){return false}
 }
 function adminBox(){
@@ -1342,7 +1342,7 @@ document.addEventListener('click',e=>{
  const gb=e.target.closest('[data-guide]');if(gb){openGuide(gb.dataset.guide);return}
  if(e.target.closest('#helpBtn')){openHelp();return}
  if(e.target.closest('#meSave')){cfSaveName(document.getElementById('meName').value);return}
- if(e.target.closest('#joinGo')){const c=document.getElementById('joinCode').value,n=document.getElementById('meName').value;if(!n.trim()){document.getElementById('joinMsg').textContent=U('needName');return}cfJoin(c,n).then(ok=>{if(!ok){const m=document.getElementById('joinMsg');if(m)m.textContent=U('codeBad')}});return}
+ if(e.target.closest('#joinGo')){const c=(document.getElementById('joinCode')||{}).value||'',n=document.getElementById('meName').value;if(!n.trim()){document.getElementById('joinMsg').textContent=U('needName');return}cfJoin(c,n).then(ok=>{if(!ok){const m=document.getElementById('joinMsg');if(m)m.textContent=U('codeBad')}});return}
  if(e.target.closest('#justLook')){CF.viewer=true;store.set('viewer',true);render();return}
  if(e.target.closest('#iAmMember')){CF.viewer=false;store.set('viewer',false);render();return}
  if(e.target.closest('.pinGo')){const row=e.target.closest('.pinrow');const v=row.querySelector('.pinIn').value;cfUnlock(v).then(ok=>{if(!ok){const m=row.querySelector('.pinMsg');if(m)m.textContent=U('pinBad')}});return}

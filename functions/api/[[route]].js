@@ -49,6 +49,7 @@ export async function onRequest({ request, env, params }) {
       return json({
         crew: (crew.results || []).map(r => ({ id: r.id, name: r.name || '', data: JSON.parse(r.data || '{}'), at: r.at })),
         tasks: tasks ? JSON.parse(tasks.v) : {},
+        codeRequired: typeof env.MEMBER_CODE === 'string' && env.MEMBER_CODE.length > 0,
         now: Date.now(),
       });
     }
