@@ -250,6 +250,9 @@ tr.total td{font-weight:900;border-bottom:0}
 .bye{font-family:"Noto Sans JP",var(--f-display);font-weight:900;font-size:clamp(24px,7vw,40px);color:var(--red);text-align:center;margin-top:20px;text-wrap:balance}
 .srcs{line-height:1.9;max-width:60em;margin:0 auto}
 .srcs a{color:var(--ink)}
+.mecard{display:flex;flex-direction:column;gap:8px}
+.mecard.need{box-shadow:0 6px 0 var(--line),0 0 0 5px color-mix(in srgb,var(--red) 45%,transparent)}
+.mecard input,.pinIn{font:inherit;border:3px solid var(--line);border-radius:12px;padding:6px 10px;background:var(--card2);color:var(--ink);min-width:0;flex:1}
 .gbtns{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 .gbtns .gbtn{margin-top:0}
 .gbtn.ob{background:var(--card);color:var(--ink)}
@@ -357,6 +360,8 @@ const UI={
  schedNote:['已用官網確認（2026/10/29 查）：Skyliner 7:23、8:12（京成 11/21 新時刻表）；上野 9:26 Kagayaki、9:38 Hakutaka 每天行駛；長野 9:17 Kagayaki 504 → 上野 10:31、9:47 Hakutaka 556 → 11:14（JR 東日本 11 月時刻表）；Access 特急不停京成成田（成田機場官網）。還沒確認：長野抵達時間 10:44／11:03 來自駅探；Alpico 冬季時刻表還沒公布，巴士全部用去年冬季班次。JR 每年 3 月改點，2 月出發不受影響。','公式確認済み：スカイライナー（11/21新ダイヤ）、上野9:26・9:38発、長野9:17・9:47発、アクセス特急は京成成田に停車しない。未確認：長野着時刻、バス全便（冬ダイヤ未発表）。','Officially confirmed (Oct 29, 2026): Skyliner 7:23/8:12 (Keisei Nov 21 timetable); Ueno 9:26 Kagayaki and 9:38 Hakutaka run daily; Nagano 9:17 Kagayaki 504 → Ueno 10:31, 9:47 Hakutaka 556 → 11:14 (JR East); Access Express skips Keisei Narita (Narita Airport). Not yet confirmed: Nagano arrival times (third-party); all bus times (winter timetable not out).'],
  v_ok:['✅ 官網確認','✅ 公式確認','✅ Official'],v_part:['🟡 部分確認','🟡 一部確認','🟡 Partly checked'],v_tbc:['⚠️ 待官網確認','⚠️ 要確認','⚠️ To confirm'],
  back2:['← 返回行程','← 戻る','← Back'],
+ whoAmI:['你是誰？','あなたは？','Who are you?'],meHint:['輸入名字，大家才看得到你的打勾和投票','名前を入れると共有されます','Add your name so others see your ticks and votes'],meHint2:['大家會看到這個名字','この名前で表示','Shown to the group'],namePh:['你的名字或暱稱','名前・ニックネーム','Name or nickname'],save:['儲存','保存','Save'],
+ adminLogin:['交通負責人登入（打勾用）','担当者ログイン','Organiser login (to tick items)'],unlock:['解鎖','解除','Unlock'],adminOn:['負責人模式：可以打勾交通任務和行前準備','担当者モード','Organiser mode: you can tick bookings and prep'],lock:['登出','ログアウト','Log out'],pinBad:['密碼不對','PINが違います','Wrong PIN'],
  tipLbl:['小提醒','ひとこと','Heads-up'],bye:['いってらっしゃい！楽しい雪の旅を ⛄','いってらっしゃい！楽しい雪の旅を ⛄','いってらっしゃい! Have a great snow trip ⛄'],
  srcLbl:['資料來源：','出典：','Sources: '],
  srcNote:['班次與票價為 2026-10-29 查詢；Alpico 2026–27 冬季時刻表與票價尚未公布，巴士資訊暫用去年冬季。上野、淺草、京成成田的車廂與出口位置參考轉乘說明網站，現場以站內指標為準。接駁車、包車、宅配、計程車金額為概估，以業者報價為準。航班、白馬住宿尚未提供，未計入。','時刻・運賃は2026-10-29時点。バスの冬ダイヤは未発表のため昨冬の情報。号車・出口は乗換案内サイト参照。貸切・タクシー等は概算。','Times and fares checked 2026-10-29. Alpico\'s 2026–27 winter timetable and fares aren\'t out, so bus info uses last winter. Car/exit positions come from transfer-guide sites; follow station signs. Shuttle, charter, delivery and taxi prices are estimates. Flights and Hakuba lodging not yet provided.'],
@@ -717,7 +722,7 @@ const HELP=[
  ['🇯🇵',['日文小抄給店員看','日本語メモ','Show Japanese phrases to staff'],['虛線框的日文句子點一下會全螢幕放大，直接拿手機給店員、站務員、司機看。總覽頁有分類整理。','タップで全画面表示。','Tap a dashed-border phrase to show it full-screen to staff or drivers. The Overview page has them all by category.']],
  ['💱',['右下角黃色圓形＝匯率換算','右下＝為替換算','Bottom-right yellow circle = currency'],['輸入日圓馬上換成台幣，反過來也可以。匯率可以自己改。','円⇄台湾ドル。','Yen ⇄ NT$, both ways. You can edit the rate.']],
  ['🌐',['中／日／英切換','言語切替','Switch language'],['右上角切換語言。中文和英文版會附日文小抄，日文版不會重複顯示。','右上で切替。','Top-right. Chinese and English versions include the Japanese phrase cards.']],
- ['🔄',['打勾只存在自己的手機','チェックは各自の端末に保存','Ticks stay on your own phone'],['出門清單、賓果、投票都只記在你自己的手機。交通任務和行前準備的進度由負責人更新網站，重新整理就看得到。','進捗は担当者がサイトを更新。','Packing, bingo and votes are saved on your phone only. The organiser updates booking and prep progress on the site; refresh to see it.']],
+ ['🔄',['大家的打勾、賓果、投票會同步','チェック・投票は全員に共有','Ticks, bingo and votes are shared'],['先在簡易頁最上面輸入你的名字，之後你的出門清單、賓果和投票，大家都看得到（約 20 秒更新一次）。交通任務和行前準備只有負責人用密碼登入後才能打勾。','最初に名前を入力。約20秒ごとに更新。','Enter your name at the top of the Simple page; your packing, bingo and votes are then shared (refreshes about every 20 s). Only the organiser, with a PIN, can tick bookings and prep.']],
  ['📲',['建議加到手機主畫面','ホーム画面に追加','Add it to your home screen'],['從 LINE 點開後，選「用瀏覽器開啟」（Safari 或 Chrome），再用分享選單「加入主畫面」，之後就像 App 一樣一點就開。','ブラウザで開いてホーム画面に追加。','Open the link in Safari or Chrome (not inside LINE), then use Share → Add to Home Screen. It opens like an app.']]
 ];
 function helpHTML(){
@@ -770,7 +775,7 @@ function todoHub(){
  <div class="hub">
  <details class="card" open><summary><b>📝 ${U('missT')}</b> <span class="pill warn">${MISSING.length}</span></summary><p class="small muted" style="margin:6px 0 10px">${U('missSub')}</p>
  <ul class="hublist">${MISSING.map(m=>`<li><span>${m[0]}</span><div><b>${esc(L(m[1]))}</b><div class="small muted">${esc(L(m[2]))}</div></div></li>`).join('')}</ul></details>
- <details class="card" open><summary><b>🧳 ${U('prepT')}</b> <span class="pill open num">${prepDone}/${PREP.length}</span></summary><p class="small muted" style="margin:6px 0 10px">${U('prepSub')}</p>
+ <details class="card" open><summary><b>🧳 ${U('prepT')}</b> <span class="pill open num">${prepDone}/${PREP.length}</span></summary><p class="small muted" style="margin:6px 0 10px">${U('prepSub')}</p>${adminBox()}
  <div class="tasks">${[...PREP].sort((a,b)=>(a[1]||'9').localeCompare(b[1]||'9')).map(x=>{const st=prepState(x);return `<div class="task${st.k==='done'?' done':''}"><input class="cb" type="checkbox" data-task="${x[0]}" ${st.k==='done'?'checked':''} ${lock?'disabled':''} aria-label="${esc(L(x[2]))}"><div class="task-body"><div class="task-top"><h3 style="font-size:16px">${esc(L(x[2]))}</h3><span class="pill ${st.k}">${x[1]?x[1].slice(5).replace('-','/')+' · ':''}${esc(st.txt)}</span></div><div class="small muted">${esc(L(x[3])||x[3][0])}</div></div></div>`}).join('')}</div></details>
  <details class="card" open><summary><b>🗳️ ${U('voteT')}</b> <span class="pill warn">${voteKeys.length}</span></summary><p class="small muted" style="margin:6px 0 10px">${U('voteSub')}</p>
  <ul class="hublist">${voteKeys.map(k=>{const {t,mine}=voteTally(k);const n=Object.values(t).reduce((a,v)=>a+v.length,0);let lead=null,max=0;Object.entries(t).forEach(([i,v])=>{if(v.length>max){max=v.length;lead=+i}});const day=Object.entries(OLINK).filter(([kk,v])=>v.includes(k)).map(([kk])=>kk.split('-')[0]);const dates=[...new Set(day)].map(n=>DAYS[n-1].date.slice(5).replace('-','/')).join('、');
@@ -979,6 +984,7 @@ function saveMine(s){
 async function flushMine(){
  if(writingMine)return;writingMine=true;
  while(pendingMine){const p=pendingMine;pendingMine=null;
+  if(SYNC.mode==='cf'){try{const r=await fetch('/api/me',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({id:SYNC.me,name:CF.name,...p})});if(!r.ok&&r.status!==500){SYNC.crewOK=false;render()}}catch(e){}if(!pendingMine)cfPull();continue}
   try{await SYNC.db.doc('crew/'+SYNC.me).set(p)}catch(e){if(e&&(e.code==='invalid_argument'||e.code==='not_granted'||e.code==='revoked')){SYNC.crewOK=false;pendingMine=null;render()}}}
  writingMine=false;
 }
@@ -987,18 +993,64 @@ async function setTask(id,done){
  if(!SYNC.canTasks){render();return}
  const next={...SYNC.tasks,[id]:{done,by:SYNC.me||'',at:Date.now()}};
  SYNC.tasks=next;render();
+ if(SYNC.mode==='cf'){try{const r=await fetch('/api/task',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({pin:CF.pin,task:id,done,by:SYNC.me})});if(!r.ok){SYNC.canTasks=false;CF.pin='';store.set('pin','')}cfPull(true)}catch(e){}return}
  try{await SYNC.db.doc('trip/tasks').set(next)}catch(e){SYNC.canTasks=false;render()}
 }
 function refreshNames(){
- if(!SYNC.user)return;
+ if(SYNC.mode==='cf'||!SYNC.user)return;
  const ids=[...new Set([...Object.keys(SYNC.crew),...Object.values(SYNC.tasks).map(t=>t&&t.by).filter(Boolean)])].sort();
  const key=ids.join(',');if(!ids.length||key===SYNC.nameKey)return;SYNC.nameKey=key;
  SYNC.user.profiles(ids).then(ps=>{SYNC.names=ps;render()});
 }
 const who=id=>{const p=SYNC.names[id];return (p&&p.name)||(id===SYNC.me?U('you'):U('someone'))};
 let renderTimer=null;const soon=()=>{clearTimeout(renderTimer);renderTimer=setTimeout(render,120)};
+const CF={name:'',pin:'',sig:''};
+function newId(){try{return crypto.randomUUID().toLowerCase()}catch(e){return 'id-'+Math.random().toString(36).slice(2)+Date.now().toString(36)}}
+async function cfPull(force){
+ CF.last=Date.now();
+ try{const r=await fetch('/api/state',{cache:'no-store'});if(!r.ok)throw new Error(r.status);const st=await r.json();
+  const sig=JSON.stringify([st.crew,st.tasks]);if(!force&&sig===CF.sig)return true;CF.sig=sig;
+  const c={},n={};(st.crew||[]).forEach(x=>{c[x.id]={...x.data,at:x.at};n[x.id]={name:x.name||''}});
+  if(SYNC.me&&!c[SYNC.me]&&SYNC.crew[SYNC.me])c[SYNC.me]=SYNC.crew[SYNC.me];
+  if(SYNC.me&&CF.name)n[SYNC.me]={name:CF.name};
+  SYNC.crew=c;SYNC.names=n;SYNC.tasks=st.tasks||{};
+  const ae=document.activeElement;if(ae&&ae.matches&&ae.matches('input,textarea')&&document.getElementById('main').contains(ae))return true;
+  render();return true;
+ }catch(e){return false}
+}
+async function cfInit(){
+ let me=store.get('me',null);if(!me||!me.id){me={id:newId(),name:''};store.set('me',me)}
+ CF.name=me.name||'';CF.pin=store.get('pin','')||'';
+ SYNC.mode='cf';SYNC.db={cf:true};SYNC.me=me.id;SYNC.crewOK=true;
+ const ok=await cfPull(true);
+ if(!ok){SYNC.mode=null;SYNC.db=null;SYNC.crewOK=false;render();return}
+ if(CF.pin){try{const r=await fetch('/api/admin',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({pin:CF.pin})});const j=await r.json();SYNC.canTasks=!!j.ok;if(!j.ok){CF.pin='';store.set('pin','')}}catch(e){}}
+ if(!SYNC.crew[SYNC.me]){const loc=store.get('mine',null);if(loc&&(Object.keys(loc.pack||{}).length||Object.keys(loc.bingo||{}).length||Object.keys(loc.votes||{}).length))saveMine(loc)}
+ render();
+ setInterval(()=>{if(document.visibilityState==='visible')cfPull()},20000);
+ document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')cfPull()});
+}
+async function cfSaveName(v){
+ CF.name=String(v||'').trim().slice(0,20);const me=store.get('me',{});me.name=CF.name;store.set('me',me);
+ SYNC.names[SYNC.me]={name:CF.name};saveMine(myState());render();
+}
+async function cfUnlock(pin){
+ try{const r=await fetch('/api/admin',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({pin})});const j=await r.json();
+  if(j.ok){CF.pin=pin;store.set('pin',pin);SYNC.canTasks=true;render();return true}}catch(e){}
+ return false;
+}
+function meCard(){
+ if(SYNC.mode!=='cf')return '';
+ const named=!!CF.name;
+ return `<div class="card mecard${named?'':' need'}"><label for="meName"><b>👤 ${U('whoAmI')}</b> <span class="small muted">${named?U('meHint2'):U('meHint')}</span></label><div class="links"><input id="meName" type="text" maxlength="20" value="${esc(CF.name)}" placeholder="${U('namePh')}"><button class="btn sm d" type="button" id="meSave">${U('save')}</button></div></div>`;
+}
+function adminBox(){
+ if(SYNC.mode!=='cf')return '';
+ if(SYNC.canTasks)return `<div class="small" style="color:var(--ok);font-weight:800">🔑 ${U('adminOn')} <button class="btn sm adminOff" type="button">${U('lock')}</button></div>`;
+ return `<details class="small"><summary class="muted" style="cursor:pointer">🔑 ${U('adminLogin')}</summary><div class="links pinrow" style="margin-top:6px"><input class="pinIn" type="password" inputmode="numeric" autocomplete="off" placeholder="PIN" aria-label="PIN"><button class="btn sm pinGo" type="button">${U('unlock')}</button><span class="pinMsg muted"></span></div></details>`;
+}
 async function initSync(){
- if(!window.claude||!window.claude.use)return;
+ if(!window.claude||!window.claude.use){if(location.protocol.startsWith('http'))cfInit();return}
  const [db,user]=await Promise.all([window.claude.use('db'),window.claude.use('user')]);
  SYNC.user=user;if(!db)return;
  SYNC.db=db;
@@ -1133,10 +1185,10 @@ function costRows(){
 function renderOverview(){
  document.getElementById('hero').innerHTML=heroHTML({c:'#2B7BB9',title:U('tripTitle'),scene:'mount',props:['🏂','🏯','🗼'],
   chips:`<span class="chip">📅 2027/2/17–2/22</span><span class="chip y">👥 ${U('people')}</span><span class="chip">🕘 ${U('tz')}</span>`,lead:U('tripLead')});
- let h=statusCard();
+ let h=meCard()+statusCard();
  h+=todoHub();
  // tasks
- h+=`<section><div class="sh"><span class="tag" style="--tagc:#C8432C">${U('tasksT')}</span><span class="sub">${U('tasksSub')}</span></div>${syncNote(true)}<div class="tasks">`;
+ h+=`<section><div class="sh"><span class="tag" style="--tagc:#C8432C">${U('tasksT')}</span><span class="sub">${U('tasksSub')}</span></div>${syncNote(true)}${adminBox()}<div class="tasks">`;
  const order=[...TASKS].sort((a,b)=>{const ka=a.open&&a.open!=='onsite'?a.open:(a.open==='onsite'?'9':'0');const kb=b.open&&b.open!=='onsite'?b.open:(b.open==='onsite'?'9':'0');return ka.localeCompare(kb)});
  order.forEach(t=>{
   const st=taskState(t);
@@ -1239,6 +1291,7 @@ function renderSimple(){
  document.getElementById('hero').innerHTML='';
  const td=tripStatus().day;
  let h=`<section><div class="sh"><span class="tag" style="--tagc:#4F6580">${U('simple')}</span><span class="sub">${U('simpleSub2')}</span></div></section>`;
+ h+=meCard();
  h+=statusCard();
  h+=`<div class="links"><button class="btn y" type="button" data-v="overview" data-hub="1">${U('todoBtn')}</button></div>`;
  DAYS.forEach(d=>{h+=`<div class="card simple${td===d?' today':''}" style="--day:${d.c}"><button class="sday" type="button" data-v="day-${d.n}"><h2>${d.emo} ${U('dayN',d.n)} · ${d.date.slice(5).replace('-','/')}（${esc(L(d.wd))}） ${L(d.title).replace(/<br>/g,' ')} <span class="muted small">›</span></h2></button>${d.items.map(i=>{const st=itemState(i);return `<div class="srow ${st}"><span class="num">${i.s}–${i.e}</span><span>${st==='now'?`<span class="pill now">● ${U('ongoing')}</span> `:''}${i.ic} ${esc(L(i.t))}${i.c?` <span class="muted num">${range(i.c[0],i.c[1])}</span>`:''}</span></div>`}).join('')}</div>`});
@@ -1264,6 +1317,8 @@ function render(){
 }
 function go(v,scroll){
  if(!(v==='overview'||v==='simple'||/^day-[1-6]$/.test(v)))v='overview';
+ document.getElementById('guide').hidden=true;
+ if(SYNC.mode==='cf'&&Date.now()-(CF.last||0)>5000)cfPull();
  view=v;if(location.hash!=='#'+v){try{history.replaceState(null,'','#'+v)}catch(e){location.hash=v}}
  render();if(scroll)window.scrollTo({top:0});
 }
@@ -1273,6 +1328,9 @@ document.addEventListener('click',e=>{
  {const fx=document.getElementById('fx');if(!fx.hidden&&!e.target.closest('#fx,#fxbtn')){fx.hidden=true;document.getElementById('fxbtn').setAttribute('aria-expanded','false')}}
  const gb=e.target.closest('[data-guide]');if(gb){openGuide(gb.dataset.guide);return}
  if(e.target.closest('#helpBtn')){openHelp();return}
+ if(e.target.closest('#meSave')){cfSaveName(document.getElementById('meName').value);return}
+ if(e.target.closest('.pinGo')){const row=e.target.closest('.pinrow');const v=row.querySelector('.pinIn').value;cfUnlock(v).then(ok=>{if(!ok){const m=row.querySelector('.pinMsg');if(m)m.textContent=U('pinBad')}});return}
+ if(e.target.closest('.adminOff')){CF.pin='';store.set('pin','');SYNC.canTasks=false;render();return}
  if(e.target.closest('#copyHelp')){const txt='📖 白馬滑雪團網站 使用說明\n\n'+HELP.map((x,i)=>`${x[0]} ${x[1][0]}\n${x[2][0]}`).join('\n\n');const ta=document.getElementById('helpText');ta.value=txt;const msg=document.getElementById('helpMsg');const fb=()=>{ta.hidden=false;ta.focus();ta.select();msg.textContent=U('copyFail')};try{navigator.clipboard.writeText(txt).then(()=>{msg.textContent=U('copied')},fb)}catch(x){fb()}return}
  if(e.target.closest('#copyLine')){const txt=lineSummary();const ta=document.getElementById('lineText');ta.value=txt;const msg=document.getElementById('copyMsg');
   const fallback=()=>{ta.hidden=false;ta.focus();ta.select();msg.textContent=U('copyFail')};
@@ -1295,6 +1353,8 @@ document.addEventListener('click',e=>{
 function toggleTi(card){const ti=card.closest('.ti');ti.classList.toggle('open');card.setAttribute('aria-expanded',ti.classList.contains('open'))}
 document.addEventListener('keydown',e=>{
  if(e.key==='Escape'){document.getElementById('ov').hidden=true;document.getElementById('guide').hidden=true;document.getElementById('fx').hidden=true}
+ if(e.key==='Enter'&&e.target.id==='meName'){cfSaveName(e.target.value);return}
+ if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('pinIn')){e.target.closest('.pinrow').querySelector('.pinGo').click();return}
  if((e.key==='Enter'||e.key===' ')&&e.target.matches('.ti .card')){e.preventDefault();toggleTi(e.target)}
 });
 document.addEventListener('change',e=>{
