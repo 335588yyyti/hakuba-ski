@@ -1,0 +1,1350 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#2B7BB9">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>白馬滑雪團 2027</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;700;900&family=Nunito:wght@700;800;900&display=swap">
+<style>
+/* Layout: sticker-card itinerary on a snowy gingham ground; sticky day tabs; one column, phone first */
+:root{
+  --bg:#E9F1F7; --check:rgba(120,165,205,.16); --card:#FFFFFF; --card2:#F3F8FC;
+  --ink:#17263C; --muted:#4F6580; --line:#17263C; --soft:#D6E5F1;
+  --red:#D2412A; --yellow:#F2B33D; --ok:#2E8B57; --okbg:#DDF1E5; --warn:#B4531A; --warnbg:#FCE9D6;
+  --past:#8A9AAE; --day:#2B7BB9; --on-day:#FFFFFF;
+  --f-display:"Noto Sans TC","Noto Sans JP","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --f-body:"Noto Sans TC","Noto Sans JP","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --f-num:"Nunito","Noto Sans TC",system-ui,sans-serif;
+}
+:root[lang="ja"]{--f-display:"Noto Sans JP","Noto Sans TC","Hiragino Sans",system-ui,sans-serif;--f-body:"Noto Sans JP","Noto Sans TC","Hiragino Sans",system-ui,sans-serif}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#101A27; --check:rgba(110,150,200,.07); --card:#1B293B; --card2:#213247;
+  --ink:#E7EFF8; --muted:#A3B6CC; --line:#05090F; --soft:#2A3D55;
+  --red:#F06A50; --yellow:#F2B33D; --ok:#6FD19A; --okbg:#173A2A; --warn:#FFB27A; --warnbg:#3D2715; --past:#6E8096; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101A27; --check:rgba(110,150,200,.07); --card:#1B293B; --card2:#213247;
+  --ink:#E7EFF8; --muted:#A3B6CC; --line:#05090F; --soft:#2A3D55;
+  --red:#F06A50; --yellow:#F2B33D; --ok:#6FD19A; --okbg:#173A2A; --warn:#FFB27A; --warnbg:#3D2715; --past:#6E8096; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background-color:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;
+  background-image:repeating-linear-gradient(45deg,var(--check) 0 16px,transparent 16px 32px),repeating-linear-gradient(-45deg,var(--check) 0 16px,transparent 16px 32px)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+.wrap{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:3px solid var(--line)}
+.top .wrap{display:flex;flex-direction:column;gap:8px;padding-block:10px}
+.toprow{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.brand{font-family:var(--f-display);font-weight:900;font-size:15px;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.langs{display:flex;border:3px solid var(--line);border-radius:999px;overflow:hidden;box-shadow:0 3px 0 var(--line);flex:none}
+.langs button{border:0;background:var(--card);padding:4px 12px;font-weight:900;cursor:pointer}
+.langs button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 8px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;display:flex;align-items:center;gap:6px;border:3px solid var(--line);border-radius:999px;background:var(--card);padding:4px 12px 4px 8px;cursor:pointer;box-shadow:0 3px 0 var(--line);line-height:1.15;text-align:left}
+.tab .e{font-size:20px}
+.tab b{display:block;font-family:var(--f-num);font-weight:900;font-size:14px}
+.tab small{display:block;font-size:11px;color:var(--muted);font-weight:700}
+.tab[aria-selected="true"]{background:var(--tc,var(--day));color:#fff}
+.tab[aria-selected="true"] small{color:#fff;opacity:.9}
+.tab .live{width:8px;height:8px;border-radius:50%;background:var(--red);display:none}
+.tab.today .live{display:inline-block}
+
+/* hero */
+.hero{position:relative;background:var(--day);color:var(--on-day);border-bottom:3px solid var(--line);overflow:hidden}
+.hero .wrap{position:relative;z-index:2;padding-block:26px 150px}
+.hero h1{font-family:var(--f-display);font-weight:900;font-size:clamp(40px,11vw,68px);line-height:1.02;margin:0 0 14px;text-wrap:balance;
+  text-shadow:3px 3px 0 var(--line),0 0 0 #000}
+.hero .lead{max-width:36em;font-weight:500;margin:12px 0 0;font-size:16px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:3px solid var(--line);border-radius:999px;padding:3px 12px;font-weight:800;font-size:14px;background:var(--card);color:var(--ink);box-shadow:0 3px 0 var(--line)}
+.chip.y{background:var(--yellow);color:#17263C}
+.chip.r{background:var(--red);color:#fff}
+.scene{position:absolute;left:0;right:0;bottom:0;height:150px;z-index:1}
+.scene svg{width:100%;height:100%;display:block}
+.props{position:absolute;bottom:14px;right:max(16px,env(safe-area-inset-right,0px));display:flex;gap:10px;font-size:40px;z-index:2;filter:drop-shadow(2px 3px 0 rgba(0,0,0,.25))}
+.snow{position:absolute;inset:0;pointer-events:none;z-index:1}
+.flake{position:absolute;top:-10px;width:6px;height:6px;border-radius:50%;background:#fff;opacity:.85;animation:fall linear infinite}
+@keyframes fall{to{transform:translate(30px,420px)}}
+@media (prefers-reduced-motion:reduce){.flake{animation:none;display:none}.pulse{animation:none!important}}
+
+main{padding-block:22px 120px}
+main>.wrap{display:flex;flex-direction:column;gap:30px}
+section{display:flex;flex-direction:column;gap:14px;min-width:0}
+.sh{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.tag{display:inline-block;font-family:var(--f-display);font-weight:900;font-size:clamp(22px,6vw,30px);color:#fff;background:var(--tagc,var(--day));border:3px solid var(--line);border-radius:14px;padding:2px 18px 4px;box-shadow:0 5px 0 var(--line);transform:rotate(-1.5deg)}
+.sh .sub{color:var(--muted);font-weight:700;font-size:14px}
+.card{background:var(--card);border:3px solid var(--line);border-radius:20px;box-shadow:0 6px 0 var(--line);padding:18px 18px}
+.card h3{margin:0 0 6px;font-family:var(--f-display);font-weight:900;font-size:19px}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+
+/* status */
+.status{display:flex;flex-direction:column;gap:10px}
+.status .big{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:900;font-size:28px;color:var(--red);line-height:1.2}
+.pulse{width:14px;height:14px;border-radius:50%;background:var(--red);flex:none;animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(.6);opacity:.5}}
+.sim{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:14px;border-top:2px dashed var(--soft);padding-top:10px}
+.sim input{font:inherit;border:2px solid var(--line);border-radius:10px;padding:4px 8px;background:var(--card2);color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:3px solid var(--line);border-radius:999px;background:var(--card);padding:6px 16px;font-weight:900;cursor:pointer;box-shadow:0 4px 0 var(--line);text-decoration:none;color:var(--ink)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
+.btn.y{background:var(--yellow);color:#17263C}
+.btn.d{background:var(--day);color:#fff}
+.btn.sm{padding:3px 12px;font-size:14px;box-shadow:0 3px 0 var(--line)}
+
+/* tasks (transport bookings) */
+.tasks{display:flex;flex-direction:column;gap:14px}
+.task{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start}
+.task.done{opacity:.62}
+.task.done h3{text-decoration:line-through}
+.cb{appearance:none;width:30px;height:30px;border:3px solid var(--line);border-radius:9px;background:var(--card2);cursor:pointer;margin:2px 0 0;display:grid;place-content:center}
+.cb:checked{background:var(--ok)}
+.cb:checked::after{content:"✓";color:#fff;font-weight:900;font-size:18px;line-height:1}
+.task-body{min-width:0;display:flex;flex-direction:column;gap:6px}
+.task-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:900;border-radius:999px;padding:2px 10px;border:2px solid currentColor;white-space:nowrap}
+.pill.wait{color:var(--muted)}
+.pill.open{color:var(--ok);background:var(--okbg)}
+.pill.now{color:#fff;background:var(--red);border-color:var(--red)}
+.pill.done{color:var(--ok)}
+.pill.must{color:#fff;background:var(--red);border-color:var(--red)}
+.pill.warn{color:var(--warn);background:var(--warnbg)}
+.facts{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;color:var(--muted);font-weight:700}
+.alert{border:3px solid var(--warn);background:var(--warnbg);color:var(--ink);border-radius:14px;padding:10px 14px;font-size:15px}
+.alert b{color:var(--warn)}
+.links{display:flex;flex-wrap:wrap;gap:8px}
+
+/* jp phrase */
+.jp{display:flex;align-items:center;gap:10px;border:2px dashed var(--day);border-radius:14px;padding:8px 12px;background:var(--card2);cursor:pointer;text-align:left;width:100%}
+.jp .ja{font-family:"Noto Sans JP",var(--f-body);font-weight:700;font-size:16px;display:block;line-height:1.45}
+.jp .mean{display:block;font-size:13px;color:var(--muted)}
+.jp .ic{flex:none;font-size:13px;font-weight:900;color:#fff;background:var(--day);border-radius:8px;padding:2px 6px}
+.phr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:10px}
+.phr-cat{font-weight:900;font-size:15px;margin-top:6px}
+
+/* overlay */
+.ov{position:fixed;inset:0;z-index:60;background:var(--card);color:var(--ink);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:20px;
+  padding:calc(24px + env(safe-area-inset-top,0px)) max(24px,env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) max(24px,env(safe-area-inset-left,0px));text-align:center}
+.ov .ja{font-family:"Noto Sans JP",var(--f-body);font-weight:900;font-size:clamp(30px,8vw,56px);line-height:1.35;max-width:16em;text-wrap:balance}
+.ov .mean{color:var(--muted);font-size:18px;max-width:30em}
+
+/* route strip */
+.route{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-weight:800}
+.route .stop{border:3px solid var(--line);border-radius:12px;background:var(--card);padding:4px 10px;box-shadow:0 3px 0 var(--line);font-size:14px}
+.route .stop small{display:block;font-size:11px;color:var(--muted)}
+.route .arr{color:var(--muted)}
+
+.daygrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:14px}
+.daycard{text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:6px;padding:0;overflow:hidden}
+.daycard .band{background:var(--dc);color:#fff;padding:10px 14px;border-bottom:3px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.daycard .band b{font-family:var(--f-num);font-weight:900;font-size:18px}
+.daycard .band span{font-size:26px}
+.daycard .inner{padding:4px 14px 14px;display:flex;flex-direction:column;gap:4px}
+.daycard h3{margin:0;font-size:17px}
+
+/* cost table */
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:460px}
+th,td{text-align:left;padding:8px 8px;border-bottom:2px solid var(--soft);vertical-align:top}
+th{font-size:13px;color:var(--muted)}
+td.r,th.r{text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.total td{font-weight:900;border-bottom:0}
+
+/* timeline */
+.tl{display:flex;flex-direction:column;gap:16px}
+.ti{display:grid;grid-template-columns:70px 1fr;gap:10px;align-items:start}
+.clock{width:66px;height:66px;border-radius:50%;border:3px dashed var(--day);background:var(--card);display:grid;place-content:center;font-family:var(--f-num);font-weight:900;font-size:16px;color:var(--ink)}
+.ti .card{padding:14px 14px;cursor:pointer;display:flex;flex-direction:column;gap:6px;min-width:0}
+.ti .head{display:flex;gap:10px;align-items:flex-start}
+.ti .ico{font-size:28px;line-height:1;flex:none;margin-top:2px}
+.ti .htxt{min-width:0;flex:1}
+.ti h3{margin:0;font-size:18px;line-height:1.35}
+.ti .when{font-family:var(--f-num);font-weight:800;font-size:14px;color:var(--muted)}
+.ti .badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.ti .chev{flex:none;font-weight:900;color:var(--muted);transition:transform .2s}
+.ti.open .chev{transform:rotate(90deg)}
+.ti .det{display:none;flex-direction:column;gap:10px;border-top:2px dashed var(--soft);padding-top:10px;margin-top:4px;cursor:auto}
+.ti.open .det{display:flex}
+.kv{display:grid;grid-template-columns:4.6em 1fr;gap:4px 10px;font-size:15px}
+:root[lang="en"] .kv{grid-template-columns:5.6em 1fr}
+.kv dt{font-weight:900;color:var(--muted);font-size:13px;padding-top:2px}
+.kv dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.ti.past .card{background:var(--card2);box-shadow:0 3px 0 var(--line)}
+.ti.past .card h3,.ti.past .ico{opacity:.55}
+.ti.past .clock{border-color:var(--past);color:var(--past)}
+.ti.past .clock::after{content:"✓";display:block;text-align:center;font-size:13px;margin-top:-2px}
+.ti.now .card{background:color-mix(in srgb,var(--yellow) 30%,var(--card));border-color:var(--line);box-shadow:0 6px 0 var(--line),0 0 0 5px color-mix(in srgb,var(--yellow) 60%,transparent)}
+.ti.now .clock{background:var(--red);color:#fff;border:3px solid var(--line)}
+.nowflag{display:none}
+.ti.now .nowflag{display:inline-flex}
+.gap-now{display:flex;align-items:center;gap:10px;font-weight:900;color:var(--red);padding-left:80px}
+
+/* checklist */
+.chk{display:flex;flex-direction:column;gap:10px}
+.chk label{display:flex;gap:12px;align-items:center;background:var(--card);border:3px solid var(--line);border-radius:16px;padding:10px 14px;box-shadow:0 4px 0 var(--line);cursor:pointer;font-weight:700}
+.chk label .t{flex:1;min-width:0}
+.chk label.on .t{text-decoration:line-through;opacity:.55}
+.bar{height:16px;border:3px solid var(--line);border-radius:999px;background:var(--card);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok);width:0;transition:width .3s}
+
+/* bingo */
+.bingo{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.cell{aspect-ratio:1/1;max-width:100%;border:3px solid var(--line);border-radius:16px;background:var(--card);box-shadow:0 5px 0 var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px;cursor:pointer;text-align:center;font-weight:800;font-size:clamp(12px,3.4vw,16px);line-height:1.25}
+.cell:nth-child(odd){transform:rotate(-1deg)}
+.cell:nth-child(even){transform:rotate(1deg)}
+.cell .e{font-size:clamp(26px,8vw,40px);line-height:1}
+.cell.on{background:var(--day);color:#fff}
+.cell.win{background:var(--red);color:#fff}
+.bingo-msg{font-family:var(--f-display);font-weight:900;font-size:24px;color:var(--red);min-height:1.4em}
+
+/* eats */
+.eat{display:flex;flex-direction:column;gap:4px;padding:12px 0;border-bottom:2px dashed var(--soft)}
+.eat:last-child{border-bottom:0;padding-bottom:0}
+.eat:first-child{padding-top:0}
+.eat h4{margin:0;font-size:17px}
+
+.pager{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+
+/* simple page */
+.simple h2{font-family:var(--f-display);font-size:20px;margin:0 0 6px}
+.sday{all:unset;cursor:pointer;display:block;width:100%}
+.sday:focus-visible{outline:3px solid var(--yellow)}
+.simple.today{box-shadow:0 6px 0 var(--line),0 0 0 5px color-mix(in srgb,var(--yellow) 60%,transparent)}
+.srow.past{opacity:.45}
+.srow.past>.num::after{content:' ✓'}
+.srow.now{background:color-mix(in srgb,var(--yellow) 30%,var(--card));border-radius:10px;padding-inline:6px;font-weight:700}
+.simple{display:flex;flex-direction:column}
+.srow{display:grid;grid-template-columns:7.2em 1fr;gap:8px;padding:6px 0;border-bottom:1px solid var(--soft);font-size:15px}
+.srow .num{font-weight:800}
+
+/* fx */
+.fxbtn{position:fixed;z-index:40;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));width:64px;height:64px;border-radius:50%;border:3px solid var(--line);background:var(--yellow);color:#17263C;font-family:var(--f-num);font-weight:900;font-size:15px;box-shadow:0 5px 0 var(--line);cursor:pointer;line-height:1.05}
+.fx{position:fixed;z-index:41;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(96px + env(safe-area-inset-bottom,0px));width:min(320px,calc(100vw - 32px));display:flex;flex-direction:column;gap:10px}
+.fx label{font-weight:800;font-size:14px;display:flex;flex-direction:column;gap:4px}
+.fx input{font:inherit;font-family:var(--f-num);font-weight:800;font-size:22px;border:3px solid var(--line);border-radius:12px;padding:6px 10px;width:100%;background:var(--card2);color:var(--ink)}
+.fx .q{display:flex;flex-wrap:wrap;gap:6px}
+.foot{color:var(--muted);font-size:13px;text-align:center}
+.gbtn{align-self:flex-start;margin-top:6px;border:3px solid var(--line);border-radius:999px;background:var(--yellow);color:#17263C;font-weight:900;font-size:14px;padding:3px 12px;box-shadow:0 3px 0 var(--line);cursor:pointer}
+.helpbtn{width:36px;height:36px;border:3px solid var(--line);border-radius:50%;background:var(--card);box-shadow:0 3px 0 var(--line);cursor:pointer;font-size:16px;display:grid;place-content:center;padding:0}
+.hub{display:flex;flex-direction:column;gap:14px}
+.hub summary{cursor:pointer;display:flex;align-items:center;gap:8px;font-size:17px;list-style:none}
+.hub summary::-webkit-details-marker{display:none}
+.hub summary::after{content:'▾';margin-left:auto;color:var(--muted)}
+.hub details:not([open]) summary::after{content:'▸'}
+.hublist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.hublist li{display:flex;gap:10px;align-items:flex-start;padding-bottom:10px;border-bottom:2px dashed var(--soft)}
+.hublist li:last-child{border-bottom:0;padding-bottom:0}
+.hublist li>span{font-size:22px;line-height:1.2}
+.tipcard{background:color-mix(in srgb,var(--day) 14%,var(--card));line-height:1.8}
+.tiplbl{color:var(--red);font-weight:900;font-family:var(--f-display);margin-right:6px}
+.bye{font-family:"Noto Sans JP",var(--f-display);font-weight:900;font-size:clamp(24px,7vw,40px);color:var(--red);text-align:center;margin-top:20px;text-wrap:balance}
+.srcs{line-height:1.9;max-width:60em;margin:0 auto}
+.srcs a{color:var(--ink)}
+.gbtns{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.gbtns .gbtn{margin-top:0}
+.gbtn.ob{background:var(--card);color:var(--ink)}
+.opts{display:flex;flex-direction:column;gap:16px}
+.opt{display:flex;flex-direction:column;gap:10px}
+.opt.rec{border-color:var(--line);box-shadow:0 6px 0 var(--line),0 0 0 4px color-mix(in srgb,var(--yellow) 55%,transparent)}
+.opt.mine{background:color-mix(in srgb,var(--day) 10%,var(--card))}
+.opt-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap}
+.opt h3{margin:0;font-size:18px}
+.ostats{grid-template-columns:5em 1fr}
+.pc{display:flex;flex-direction:column;gap:4px;font-size:15px}
+.vrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-top:2px dashed var(--soft);padding-top:10px}
+.guide{position:fixed;inset:0;z-index:50;background:var(--bg);overflow-y:auto;padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(100px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.gwrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.ghead{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.gtitle{font-family:var(--f-display);font-weight:900;font-size:clamp(22px,6vw,30px);margin:0;line-height:1.25;text-wrap:balance}
+.gsteps{list-style:none;counter-reset:g;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.gsteps li{counter-increment:g;position:relative;background:var(--card);border:3px solid var(--line);border-radius:18px;box-shadow:0 5px 0 var(--line);padding:14px 14px 14px 58px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.gsteps li::before{content:counter(g);position:absolute;left:12px;top:12px;width:34px;height:34px;border-radius:50%;background:var(--day);color:#fff;font-family:var(--f-num);font-weight:900;display:grid;place-content:center;border:3px solid var(--line)}
+.sign{display:flex;flex-direction:column;gap:2px;background:#1F3A5F;color:#fff;border-radius:10px;padding:8px 12px;border:2px solid var(--line)}
+.sign .lbl{font-size:11px;font-weight:800;opacity:.75;letter-spacing:.04em}
+.sign .txt{font-family:"Noto Sans JP",var(--f-body);font-weight:900;font-size:18px;line-height:1.35;overflow-wrap:anywhere}
+</style>
+
+</head>
+<body>
+<div class="top"><div class="wrap">
+  <div class="toprow">
+    <div class="brand" id="brand"></div>
+    <div style="display:flex;gap:8px;align-items:center;flex:none"><button class="helpbtn" type="button" id="helpBtn" aria-label="Help">❓</button><div class="langs" role="group" aria-label="Language">
+      <button data-l="zh" type="button">中</button><button data-l="ja" type="button">日</button><button data-l="en" type="button">EN</button>
+    </div></div>
+  </div>
+  <div class="tabs" id="tabs" role="tablist"></div>
+</div></div>
+
+<div id="hero"></div>
+<main><div class="wrap" id="main"></div></main>
+
+<button class="fxbtn" id="fxbtn" type="button" aria-expanded="false">¥⇄<br>NT$</button>
+<div class="fx card" id="fx" hidden></div>
+<div class="ov" id="ov" hidden></div>
+<div class="guide" id="guide" hidden role="dialog" aria-modal="true"></div>
+
+<script>
+(()=>{
+const GROUP=12;
+const LANGS=['zh','ja','en'];
+let lang='zh';
+try{const s=localStorage.getItem('ski-lang');if(LANGS.includes(s))lang=s}catch(e){}
+const LI=()=>LANGS.indexOf(lang);
+const L=v=>Array.isArray(v)?(v[LI()]??v[0]):v;
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const store={get(k,d){try{const v=localStorage.getItem('ski-'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem('ski-'+k,JSON.stringify(v))}catch(e){}}};
+const yen=n=>'¥'+n.toLocaleString('en-US');
+const range=(a,b)=>a===b?yen(a):yen(a)+'–'+yen(b).slice(1);
+const gmap=q=>'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q);
+const gdir=(pts,mode)=>{const o=pts[0],d=pts[pts.length-1],w=pts.slice(1,-1);return 'https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(o)+'&destination='+encodeURIComponent(d)+(w.length?'&waypoints='+encodeURIComponent(w.join('|')):'')+'&travelmode='+(mode||'transit')};
+
+/* ---------- UI strings ---------- */
+const UI={
+ brand:['白馬滑雪團 · 2027/2/17–2/22','白馬スキー旅 · 2027/2/17–2/22','Hakuba Ski Trip · Feb 17–22, 2027'],
+ overview:['總覽','概要','Overview'],ovsub:['交通任務','手配リスト','Bookings'],
+ simple:['簡易頁','一覧','Simple'],simplesub:['全部行程','全日程','All days'],
+ tripTitle:['白馬滑雪<br>長野・東京','白馬スキー<br>長野・東京','Hakuba Ski<br>Nagano · Tokyo'],
+ tripLead:['12 人六天五夜：白馬連滑兩天、長野善光寺與信州燒肉、東京淺草與晴空塔，最後在成田吃鰻魚飯回家。','12名・5泊6日：白馬で2日間スキー、長野で善光寺と信州焼肉、東京で浅草とスカイツリー、最後は成田でうなぎを食べて帰国。','12 people, 6 days: two full ski days in Hakuba, Zenkoji and Shinshu beef in Nagano, Asakusa and Skytree in Tokyo, and grilled eel in Narita before flying home.'],
+ people:['12 人','12名','12 people'],tz:['日本比台灣快 1 小時','台湾より1時間進んでいます','Japan is 1 hr ahead of Taiwan'],
+ now:['現在','いま','Right now'],
+ before:d=>[`距離出發還有 ${d} 天`,`出発まであと ${d} 日`,`${d} days to go`],
+ nextTask:['下一個要辦的交通任務','次の手配','Next booking to do'],
+ ongoing:['進行中','進行中','Happening now'],moving:['移動中','移動中','On the move'],
+ nextStop:['下一站','次は','Next'],until:['到','まで','until'],
+ resting:['休息中','おやすみ中','Resting'],tomorrow:['明天第一站','明日の最初','First up tomorrow'],
+ ended:['旅程結束，歡迎回家！','おつかれさまでした！','Trip complete. Welcome home!'],
+ sim:['模擬時間（看效果用）','時刻シミュレーション','Simulate a time'],simClear:['回到現在','現在に戻す','Back to now'],simNote:['以日本時間計算','日本時間で計算','Japan time'],
+ tasksT:['交通任務','交通の手配','Transport to-dos'],tasksSub:['我負責：開賣日一到就搶','担当：発売日に即予約','My job: book on release day'],
+ opensIn:d=>[`還有 ${d} 天開放`,`発売まで ${d} 日`,`Opens in ${d} days`],
+ opensToday:['今天開放！','本日発売！','Opens today!'],
+ openNow:['可以買了','予約可能','Open now'],doneP:['已完成','完了','Done'],
+ onsite:['現場買','当日購入','Buy on the day'],
+ jrCard:['JR 窗口購票卡','JR窓口用メモ','JR ticket-desk card'],jrCardSub:['點一下全螢幕給站務員看','タップで全画面表示','Tap to show staff full-screen'],
+ routeT:['路線','ルート','Route'],stayT:['住宿','宿泊','Stays'],daysT:['每天怎麼走','毎日のプラン','Day by day'],daysSub:['點卡片看細節','タップで詳細','Tap a card'],
+ costT:['團體交通費估算','交通費の目安','Group transport cost'],costSub:['每人 × 12 人','1人 × 12名','Per person × 12'],
+ item:['項目','項目','Item'],per:['每人','1人','Each'],all:['12 人','12名','×12'],total:['合計','合計','Total'],
+ phrT:['日文小抄','日本語フレーズ','Japanese phrases'],phrSub:['點一下放大給對方看','','Tap to show full-screen'],
+ tipsT:['全程提醒','全体メモ','Good to know'],
+ todayT:['交通怎麼走','今日の移動','Getting around'],navBtn:['用 Google 地圖看路線','Googleマップで経路','Route in Google Maps'],
+ spend:['每人預估','1人あたり目安','Est. per person'],transportOnly:['交通','交通費','transport'],
+ tlT:['今天行程','今日のスケジュール','Today'],tlSub:['點卡片看交通、付款、地址','タップで詳細','Tap for details'],
+ move:['交通','移動','Getting there'],pay:['付款','支払い','Payment'],cost:['費用','費用','Cost'],addr:['地址','住所','Address'],note:['提醒','メモ','Note'],
+ openMap:['開地圖','地図','Map'],must:['必做','必須','Must'],bookTask:['交通任務','要手配','Booking'],
+ packT:['今天出門帶','今日の持ち物','Pack today'],mustBring:['必帶','必須','Must'],
+ bingoT:['今日任務賓果','今日のビンゴ','Daily bingo'],bingoSub:['完成點一格，連成一線就贏','達成したらタップ、1列そろえば勝ち','Tap what you did; get a line to win'],
+ shuffle:['🔀 換一組任務','🔀 お題を変える','🔀 New set'],clear:['清空','クリア','Clear'],
+ bingoWin:n=>[`賓果！連成 ${n} 條線`,`ビンゴ！${n}列達成`,`BINGO! ${n} line${n>1?'s':''}`],
+ eatT:['順路餐廳','近くのお店','Food on the way'],
+ prev:['← 前一天','← 前の日','← Previous'],next:['後一天 →','次の日 →','Next →'],back:['回總覽','概要へ','Overview'],
+ fxT:['匯率換算','為替換算','Currency'],rate:['1 日圓 = ? 新台幣（可自己改）','1円 = ?台湾ドル（変更可）','1 JPY = ? TWD (editable)'],
+ jpy:['日圓 ¥','日本円 ¥','Yen ¥'],twd:['新台幣 NT$','台湾ドル NT$','Taiwan $'],
+ tapClose:['點任一處關閉','タップで閉じる','Tap anywhere to close'],
+ dayN:n=>[`Day ${n}`,`${n}日目`,`Day ${n}`],
+ tbd:['待確認','未定','TBC'],
+ schedT:['建議班次','おすすめの便','Which train to book'],schedSub:['依實際時刻表重排','実際の時刻表で再計算','Rebuilt from real timetables'],
+ leg:['日期・路段','区間','Leg'],pick:['建議搭','おすすめ','Take'],backup:['備案','予備','Backup'],
+ schedNote:['已用官網確認（2026/10/29 查）：Skyliner 7:23、8:12（京成 11/21 新時刻表）；上野 9:26 Kagayaki、9:38 Hakutaka 每天行駛；長野 9:17 Kagayaki 504 → 上野 10:31、9:47 Hakutaka 556 → 11:14（JR 東日本 11 月時刻表）；Access 特急不停京成成田（成田機場官網）。還沒確認：長野抵達時間 10:44／11:03 來自駅探；Alpico 冬季時刻表還沒公布，巴士全部用去年冬季班次。JR 每年 3 月改點，2 月出發不受影響。','公式確認済み：スカイライナー（11/21新ダイヤ）、上野9:26・9:38発、長野9:17・9:47発、アクセス特急は京成成田に停車しない。未確認：長野着時刻、バス全便（冬ダイヤ未発表）。','Officially confirmed (Oct 29, 2026): Skyliner 7:23/8:12 (Keisei Nov 21 timetable); Ueno 9:26 Kagayaki and 9:38 Hakutaka run daily; Nagano 9:17 Kagayaki 504 → Ueno 10:31, 9:47 Hakutaka 556 → 11:14 (JR East); Access Express skips Keisei Narita (Narita Airport). Not yet confirmed: Nagano arrival times (third-party); all bus times (winter timetable not out).'],
+ v_ok:['✅ 官網確認','✅ 公式確認','✅ Official'],v_part:['🟡 部分確認','🟡 一部確認','🟡 Partly checked'],v_tbc:['⚠️ 待官網確認','⚠️ 要確認','⚠️ To confirm'],
+ back2:['← 返回行程','← 戻る','← Back'],
+ tipLbl:['小提醒','ひとこと','Heads-up'],bye:['いってらっしゃい！楽しい雪の旅を ⛄','いってらっしゃい！楽しい雪の旅を ⛄','いってらっしゃい! Have a great snow trip ⛄'],
+ srcLbl:['資料來源：','出典：','Sources: '],
+ srcNote:['班次與票價為 2026-10-29 查詢；Alpico 2026–27 冬季時刻表與票價尚未公布，巴士資訊暫用去年冬季。上野、淺草、京成成田的車廂與出口位置參考轉乘說明網站，現場以站內指標為準。接駁車、包車、宅配、計程車金額為概估，以業者報價為準。航班、白馬住宿尚未提供，未計入。','時刻・運賃は2026-10-29時点。バスの冬ダイヤは未発表のため昨冬の情報。号車・出口は乗換案内サイト参照。貸切・タクシー等は概算。','Times and fares checked 2026-10-29. Alpico\'s 2026–27 winter timetable and fares aren\'t out, so bus info uses last winter. Car/exit positions come from transfer-guide sites; follow station signs. Shuttle, charter, delivery and taxi prices are estimates. Flights and Hakuba lodging not yet provided.'],
+ hubT:['待辦總表','やることまとめ','To-do hub'],hubSub:['缺的資料・行前準備・要投票的，全部在這裡','不足情報・準備・投票','Missing info, prep and votes in one place'],
+ missT:['還缺的資料','不足している情報','Info still needed'],missSub:['交給交通負責人彙整後更新網站。','担当者がまとめて更新します。','Send these to the organiser to update the site.'],
+ prepT:['行前準備','出発前の準備','Before you go'],prepSub:['有日期的照時間排；負責人打勾後大家都看得到。','担当者がチェック。','Sorted by date; the organiser ticks them off for everyone.'],
+ voteT:['需要大家投票','投票してほしいこと','Please vote'],voteSub:['每一段移動選一個你偏好的方案。','移動方法を選んでください。','Pick your preferred option for each transfer.'],
+ anyTime:['出發前完成','出発前までに','Before departure'],dueIn:n=>[`還有 ${n} 天`,`あと${n}日`,`${n} days left`],dueToday:['今天','本日','Today'],overdue:['已過期限','期限切れ','Overdue'],
+ leading:['目前最多','最多','Leading'],goVote:['去投票','投票','Vote'],change:['改選','変更','Change'],todoBtn:['📌 待辦總表（缺資料・行前準備・投票）','📌 やることまとめ','📌 To-do hub (info, prep, votes)'],
+ helpT:['使用說明','使い方','How to use this site'],closeHelp:['✕ 關閉','✕ 閉じる','✕ Close'],copyHelp:['複製使用說明到 LINE','使い方をLINE用にコピー','Copy the guide for LINE'],
+ flightOut:['去程 2/17 05:30 抵達成田（航班待填）','往路 2/17 5:30 成田着（便名未定）','Out: arrive Narita 2/17 05:30 (flight TBC)'],flightBack:['回程 2/22 成田出發（航班待填）','復路 2/22 成田発（便名未定）','Back: depart Narita 2/22 (flight TBC)'],
+ simpleSub2:['全部行程一頁看完，跟著時間即時更新','全日程を1ページで・自動更新','Everything on one page, updates live'],
+ whyT:['給團員的重點','メンバーへのポイント','Key points for the group'],whySub:['為什麼這樣排','この計画の理由','Why the plan looks like this'],
+ copyLine:['複製成 LINE 群組訊息','LINE用にコピー','Copy as a LINE message'],copied:['已複製！到 LINE 貼上，再附上網站連結。','コピーしました。','Copied! Paste it in LINE with the site link.'],copyFail:['無法自動複製，請長按下面的文字全選複製。','下の文章を長押ししてコピー。','Couldn\'t copy automatically; long-press the text below to copy.'],
+ optBtn:['🔀 比較方案','🔀 移動方法を比較','🔀 Compare options'],recommend:['建議','おすすめ','Suggested'],
+ oTime:['時間','所要','Time'],oXfer:['轉乘','乗換','Changes'],oBag:['帶行李','荷物','Luggage'],noXfer:['不用轉','なし','None'],xferN:n=>[`${n} 次`,`${n}回`,`${n}`],
+ free:['免費','無料','Free'],pickThis:['我選這個','これにする','I pick this'],myPick:['我的選擇','選択中','My pick'],votes:n=>[`${n} 人選`,`${n}名`,`${n} picked`],
+ voteSync:['大家的選擇會即時同步，交通負責人可以看票數決定。','選択は全員に共有されます。','Picks are shared live so the organiser can decide.'],
+ voteLocal:['你的選擇只存在這支手機；投票結果請在 LINE 群組回覆。','この端末のみに保存。結果はLINEで。','Saved on this phone only; reply with your pick in the LINE group.'],lookFor:['找這個指標','この表示を探す','Look for'],openMapSV:['在 Google 地圖看位置與街景','Googleマップで見る','Open in Google Maps (Street View)'],
+ guideNote:['車廂和出口資訊整理自乘換說明網站與官方站內資訊，現場以站內指標為準；地圖連結點開後可切換街景看實際畫面。','号車・出口は乗換案内サイト等を参照。現地の案内表示を優先してください。','Car and exit info comes from transfer-guide sites and official station pages; follow on-site signs. Map links open Street View for real-world views.'],
+ you:['你','あなた','You'],someone:['團員','メンバー','Someone'],
+ syncOn:['🟢 全團同步：大家看到的是同一份','🟢 全員で同期中','🟢 Synced for the whole group'],
+ syncLocal:['⚪ 打勾紀錄只存在這支手機','⚪ この端末だけの記録','⚪ Ticks are saved on this phone only'],
+ syncOwner:['只有你（交通負責人）能打勾，團員看得到進度','チェックは担当者のみ。全員が進捗を見られます','Only you can tick these; everyone sees progress'],
+ syncRead:['交通負責人會在這裡打勾，你看得到即時進度','担当者が更新します','The organiser ticks these; you see live progress'],
+ teamPack:['全團準備狀況','みんなの準備','Group packing'],teamReady:['必帶都帶齊了','必須品OK','All musts packed'],
+ teamBingo:['今天已賓果','今日ビンゴ達成','Bingo today'],noOne:['還沒有人','まだ誰も','Nobody yet'],
+ lastUpdate:['行程依 Gemini 規劃文件整理；票價與時間為預估，出發前請再確認。','Geminiの旅程表をもとに作成。料金・時刻は目安です。','Built from the Gemini plan. Prices and times are estimates; check before you go.']
+};
+const U=(k,...a)=>{const v=UI[k];return typeof v==='function'?L(v(...a)):L(v)};
+
+/* ---------- phrases ---------- */
+const PH={
+ jr1:{ja:'2月17日、上野9時26分発のかがやき507号、長野まで、指定席を大人12名分お願いします。できれば近くの席がいいです。',m:['2/17 上野 9:26 開的 Kagayaki 507 號到長野，指定席大人 12 位，座位盡量靠近。','','Feb 17, Kagayaki 507 from Ueno at 9:26 to Nagano, reserved seats for 12 adults, together if possible.']},
+ jr2:{ja:'2月21日、長野9時17分発のかがやき504号、上野まで、指定席を大人12名分お願いします。できれば近くの席がいいです。',m:['2/21 長野 9:17 開的 Kagayaki 504 號到上野，指定席大人 12 位，座位盡量靠近。','','Feb 21, Kagayaki 504 from Nagano at 9:17 to Ueno, reserved seats for 12 adults, together if possible.']},
+ jrAlt:{ja:'満席なら、次のはくたかの自由席でも大丈夫です。',m:['如果客滿，下一班 Hakutaka 的自由席也可以。','','If it\'s full, the next Hakutaka unreserved is fine.']},
+ jrFree:{ja:'指定席がなければ、自由席でも大丈夫です。',m:['如果沒有指定席，自由席也可以。','','If no reserved seats are left, non-reserved is fine.']},
+ jrWhere:{ja:'新幹線の乗り場はどこですか？',m:['新幹線月台在哪裡？','','Where is the Shinkansen platform?']},
+ bus:{ja:'白馬八方行きのバス乗り場はどこですか？',m:['往白馬八方的巴士在哪裡搭？','','Where is the bus stop for Hakuba Happo?']},
+ busRes:{ja:'12名で予約しています。こちらが予約画面です。',m:['我們 12 人有預約，這是預約畫面。','','We have a booking for 12. Here is the confirmation.']},
+ skyliner:{ja:'KKdayのバウチャーをスカイライナーの乗車券に引き換えたいです。',m:['我想把 KKday 憑證換成 Skyliner 車票。','','I\'d like to exchange this KKday voucher for Skyliner tickets.']},
+ skyBuy:{ja:'スカイライナーで京成上野まで、大人10名お願いします。',m:['Skyliner 到京成上野，大人 10 位。','','Skyliner to Keisei Ueno, 10 adults please.']},
+ luggage:{ja:'チェックインの前に、荷物を預かってもらえますか？',m:['入住前可以先寄放行李嗎？','','Can we leave our luggage before check-in?']},
+ boots:{ja:'ブーツが少しきついです。ワンサイズ大きいのはありますか？',m:['雪鞋有點緊，有大一號的嗎？','','These boots are a bit tight. Do you have one size up?']},
+ lift:{ja:'大人の1日券を1枚ください。',m:['請給我一張成人一日券。','','One adult one-day lift pass, please.']},
+ beginner:{ja:'初心者向けのコースはどこですか？',m:['初學者的雪道在哪裡？','','Where are the beginner runs?']},
+ hurt:{ja:'すみません、けがをしました。助けてください。',m:['不好意思，我受傷了，請幫幫我。','','Excuse me, I\'m injured. Please help.']},
+ dry:{ja:'乾燥室はどこですか？',m:['乾燥室在哪裡？','','Where is the drying room?']},
+ towel:{ja:'タオルはありますか？いくらですか？',m:['有毛巾嗎？多少錢？','','Do you have towels? How much?']},
+ table:{ja:'12名ですが、入れますか？',m:['我們 12 個人，有位子嗎？','','We are 12. Do you have room?']},
+ resv:{ja:'予約している者です。名前は＿＿＿です。',m:['我有預約，名字是＿＿＿（填訂位人）。','','We have a reservation under ___ (booking name).']},
+ rec:{ja:'おすすめは何ですか？',m:['推薦什麼？','','What do you recommend?']},
+ card:{ja:'カードは使えますか？',m:['可以刷卡嗎？','','Can I pay by card?']},
+ check:{ja:'お会計をお願いします。別々に払えますか？',m:['麻煩結帳。可以分開付嗎？','','The bill, please. Can we pay separately?']},
+ number:{ja:'整理券はどこでもらえますか？',m:['號碼牌在哪裡拿？','','Where do we get a queue ticket?']},
+ shichimi:{ja:'辛さ控えめの七味を作りたいです。',m:['我想調一罐不太辣的七味粉。','','I\'d like a milder custom shichimi blend.']},
+ locker:{ja:'大きい荷物用のコインロッカーはどこですか？',m:['大型行李的置物櫃在哪裡？','','Where are the large coin lockers?']},
+ ic:{ja:'Suicaで払えますか？',m:['可以用 Suica 付嗎？','','Can I pay with Suica?']},
+ charge:{ja:'Suicaにチャージしたいです。',m:['我想儲值 Suica。','','I\'d like to top up my Suica.']},
+ narita:{ja:'京成成田駅に行きたいです。どの電車に乗ればいいですか？',m:['我要去京成成田站，該搭哪一班車？','','I need Keisei Narita Station. Which train should I take?']},
+ terminal:{ja:'この電車は空港第2ビル駅に止まりますか？',m:['這班車有停機場第 2 航廈站嗎？','','Does this train stop at Airport Terminal 2?']},
+ toilet:{ja:'トイレはどこですか？',m:['廁所在哪裡？','','Where is the restroom?']},
+ lost:{ja:'すみません、道に迷いました。ここに行きたいです。',m:['不好意思，我迷路了，我想去這裡。','','Excuse me, I\'m lost. I want to go here.']},
+ hospital:{ja:'病院に連れて行ってください。',m:['請帶我去醫院。','','Please take me to a hospital.']},
+ taxi:{ja:'この住所までお願いします。',m:['麻煩到這個地址。','','To this address, please.']},
+ photo:{ja:'写真を撮ってもらえますか？',m:['可以幫我們拍照嗎？','','Could you take our photo?']}
+};
+const PHCATS=[
+ [['交通','交通','Transport'],['jr1','jrAlt','jrFree','jrWhere','skyBuy','bus','busRes','ic','charge','locker','narita','terminal','taxi']],
+ [['雪場','スキー場','On the slopes'],['boots','lift','beginner','dry','hurt']],
+ [['吃飯','食事','Eating'],['table','resv','rec','card','check','number']],
+ [['住宿・溫泉','宿・温泉','Hotel & onsen'],['luggage','towel']],
+ [['救急・其他','困ったとき','Help'],['toilet','lost','hospital','photo']]
+];
+
+/* ---------- transport bookings ---------- */
+const TASKS=[
+ {id:'sky',ic:'🚄',open:null,date:'2027-02-17',
+  t:['Skyliner 2 號 成田機場 7:23 → 京成上野 8:29','スカイライナー2号 成田空港7:23 → 京成上野8:29','Skyliner No.2: Narita 7:23 → Keisei Ueno 8:29'],
+  facts:[['子菱已有 2 張，還要買 10 張','子菱さんが2枚購入済み、残り10枚','Zi-Ling has 2; buy 10 more'],['第 1 航廈 7:23／第 2 航廈 7:27','T1 7:23・T2 7:27','T1 7:23 / T2 7:27'],['約 ¥2,580／人','1人 約¥2,580','~¥2,580 each']],
+  warn:['原規劃的 06:40 Skyliner 不存在：平日最早一班是 7:23。2/17 是週三，照平日時刻。已用京成 11/21 新時刻表確認。','原案の6:40発は存在しません。平日の始発は7:23（11/21新ダイヤで確認済み）。','The 06:40 Skyliner in the original plan does not exist; the first weekday train is 7:23 (confirmed on Keisei\'s Nov 21 timetable).'],
+  body:['建議先在 KKday 買好 10 張，憑證到櫃台一次換 12 張同班座位。落地到 7:23 之間剛好用來入境、領行李、買 Suica 和早餐。趕不上就搭 8:12（4 號，9:16 到上野），一樣接得上備案新幹線。','KKdayで10枚を事前購入し、窓口で12名同じ便に引き換え。7:23に間に合わなければ8:12発（9:16上野着）。','Buy the 10 on KKday and swap all 12 for the same train at the counter. Landing to 7:23 covers immigration, bags, Suica and breakfast. Miss it and take 8:12 (No.4, Ueno 9:16), which still connects to the backup train.'],
+  phr:['skyliner','skyBuy']},
+ {id:'jr1',ic:'🚅',open:'onsite',date:'2027-02-17',
+  t:['新幹線 Kagayaki 507 上野 9:26 → 長野 10:44','かがやき507号 上野9:26 → 長野10:44','Kagayaki 507: Ueno 9:26 → Nagano 10:44'],
+  facts:[['現場買','当日購入','Buy on the day'],['備案：Hakutaka 557 9:38 → 11:03（有自由席）','予備：はくたか557号 9:38→11:03（自由席あり）','Backup: Hakutaka 557, 9:38 → 11:03 (unreserved cars)'],['指定席約 ¥8,340／人','指定席 1人 約¥8,340','~¥8,340 each']],
+  body:['8:29 到京成上野，走 5–10 分鐘到 JR 上野，有 50 分鐘買票，12 人很從容。Kagayaki 全車指定席；買不到 12 個位子就改 Hakutaka 557 坐自由席。兩班都接得上 11:20 的巴士。','京成上野8:29着、JR上野で購入する時間は約50分。かがやきが取れなければはくたか557号の自由席へ。どちらも11:20のバスに間に合います。','Arrive 8:29, walk to JR Ueno, ~50 min to buy 12 tickets. Kagayaki is all-reserved; if 12 seats aren\'t available, take Hakutaka 557 unreserved. Both make the 11:20 bus.'],
+  phr:['jr1','jrAlt','jrFree','jrWhere']},
+ {id:'bus1',ic:'🚌',open:'2026-12-17',date:'2027-02-17',
+  t:['Alpico 巴士 長野站東口 11:20 → 白馬八方 12:30','アルピコバス 長野駅東口11:20 → 白馬八方12:30','Alpico bus: Nagano East 11:20 → Hakuba Happo 12:30'],
+  facts:[['12/17 起可預約（一次上限 12 人）','12/17予約開始（1回12名まで）','Booking from Dec 17 (max 12)'],['備案 12:30 → 13:40','予備 12:30→13:40','Backup 12:30 → 13:40'],['約 ¥2,900–3,800／人','1人 約¥2,900–3,800','~¥2,900–3,800 each']],
+  warn:['2026–27 冬季時刻表還沒公布，以上是去年冬季班次。去年冬天上午從長野出發只有 7:55、8:05 是預約制，10 點後的班次是「非預約制、同時段多台車」。12/17 先看新時刻表：11:20 那班能預約就訂 12 人；不能預約就不用訂，當天提早 20 分鐘排隊。','2026–27冬ダイヤは未発表。昨冬は10時以降の便は予約不要（複数台運行）。12/17に新時刻表を確認し、予約できる便なら12名で予約。','The 2026–27 winter timetable isn\'t out; these are last winter\'s times. Last winter only the 7:55 and 8:05 Nagano departures were bookable; later ones were walk-on with several buses. On Dec 17, check: book 12 seats if 11:20 is bookable; if not, just queue 20 min early.'],
+  body:['抵達長野 10:44，有 35 分鐘：先到 JR 長野站 2 樓綠色窗口旁的售票機買巴士票，再買車站便當在車上吃。長野站東口上車。','長野着10:44。JR長野駅2階の券売機でバス券を買い、駅弁を買って乗車。','Arrive 10:44 with 35 min to spare: buy bus tickets at the machines by the JR ticket office (2F), grab ekiben, board at East Exit.'],
+  link:['https://www.alpico.co.jp/traffic/express/nagano_hakuba/',['巴士官網','バス公式サイト','Bus website']],phr:['bus','busRes']},
+ {id:'bus2',ic:'🚌',open:'2026-12-20',date:'2027-02-20',
+  t:['Alpico 巴士 白馬八方 9:10 → 長野站東口 約 10:20','アルピコバス 白馬八方9:10 → 長野駅東口 約10:20','Alpico bus: Hakuba Happo 9:10 → Nagano ~10:20'],
+  facts:[['12/20 起可預約','12/20予約開始','Booking from Dec 20'],['備案 10:10 發','予備 10:10発','Backup 10:10'],['約 ¥2,900–3,800／人','1人 約¥2,900–3,800','~¥2,900–3,800 each']],
+  warn:['原規劃的 09:40 班次去年冬天沒有；上午往長野只有 8:10、9:10、10:10 這幾班，而且是非預約制。12/20 先看新時刻表，能預約就訂，不能就提早排隊。','原案の9:40発は昨冬ありません。午前の長野行きは8:10・9:10・10:10（予約不要）。','The 09:40 bus in the original plan didn\'t run last winter; morning Nagano-bound buses were 8:10, 9:10, 10:10, walk-on. On Dec 20, book if possible, otherwise queue early.'],
+  body:['建議 9:10，8:30 退房、8:50 到總站排隊。到長野約 10:20，善光寺行程完全不用改。','8:30チェックアウト、8:50にはバスターミナルへ。','Check out 8:30, queue by 8:50. Arrive ~10:20; the Zenkoji plan stays as is.'],
+  link:['https://www.alpico.co.jp/traffic/express/nagano_hakuba/',['巴士官網','バス公式サイト','Bus website']],phr:['busRes']},
+ {id:'sky2',ic:'🗼',open:'2026-12-01',date:'2027-02-21',
+  t:['晴空塔展望台（2/21 週日 16:30–17:00 時段）','東京スカイツリー展望台（2/21 16:30–17:00枠）','Tokyo Skytree decks (Feb 21, 16:30–17:00 slot)'],
+  facts:[['12/1 開始販售','12/1 発売開始','On sale Dec 1'],['12 人同一時段','12名同じ枠','All 12 in one slot'],['套票約 ¥3,100–3,500／人','1人 約¥3,100–3,500','~¥3,100–3,500 each']],
+  body:['2 月下旬東京日落大約 17:30，16:30–17:00 進場可以看白天、夕陽和夜景。週日人多，12/1 開賣就買。','2月下旬の日没は17:30頃。日曜は混むので発売日に。','Sunset in late Feb is ~17:30, so a 16:30–17:00 entry gets day, sunset and night. Sunday crowds: buy on Dec 1.'],
+  link:['https://global-official-ticket.tokyo-skytree.jp/zt/home',['晴空塔售票','公式チケット','Official tickets']]},
+ {id:'jr2',ic:'🚅',open:'onsite',date:'2027-02-21',
+  t:['新幹線 Kagayaki 504 長野 9:17 → 上野 10:31','かがやき504号 長野9:17 → 上野10:31','Kagayaki 504: Nagano 9:17 → Ueno 10:31'],
+  facts:[['2/20 在長野站先買','2/20に長野駅で購入','Buy at Nagano on Feb 20'],['備案：Hakutaka 556 9:47 → 11:14（有自由席）','予備：はくたか556号 9:47→11:14（自由席あり）','Backup: Hakutaka 556, 9:47 → 11:14 (unreserved)'],['指定席約 ¥8,340／人','1人 約¥8,340','~¥8,340 each']],
+  warn:['原規劃的 09:05 班次不存在，改搭 9:17 Kagayaki 504。','原案の9:05発は存在しません。9:17かがやき504号へ。','The 09:05 train in the plan doesn\'t exist; take Kagayaki 504 at 9:17.'],
+  body:['2/20 上午 10:20 到長野站時，或晚上逛 MIDORI 時，就在長野站綠色窗口把 12 張買好，隔天早上直接進站。','2/20に長野駅で12名分を買っておけば翌朝は改札へ直行。','Buy all 12 at Nagano Station on Feb 20 (on arrival or during the evening) and walk straight to the gates next morning.'],
+  phr:['jr2','jrAlt','jrFree']},
+ {id:'yaki',ic:'🥩',open:null,date:'2027-02-20',
+  t:['2/20 週六 信州燒肉訂位','2/20（土）信州焼肉の予約','Sat Feb 20: book the yakiniku dinner'],
+  facts:[['12 人','12名','12 people'],['人均約 ¥5,000–8,000','1人 約¥5,000–8,000','~¥5,000–8,000 each']],
+  body:['週六晚上很熱門，12 人要提早訂，可能要分兩桌。','土曜夜は混むので12名は早めに予約。','Saturday nights fill up; 12 people may need two tables.'],phr:['resv','table']},
+ {id:'narita',ic:'🚃',open:'onsite',date:'2027-02-22',
+  t:['2/22 淺草 → 京成成田：搭京成本線，不要搭 Access 特急','2/22 浅草 → 京成成田：京成本線経由（アクセス特急はNG）','Feb 22 Asakusa → Keisei Narita: Keisei Main Line, not Access Express'],
+  facts:[['刷 IC 卡，不用預約','ICカード、予約不要','IC card, no booking'],['約 70–80 分','約70–80分','~70–80 min']],
+  warn:['原規劃寫「Access 特急」到京成成田站，但 Access 特急走成田 Sky Access 線，不停京成成田站。要搭經「京成本線」的特急／快速（車頭寫「京成本線経由」），或在青砥換京成本線特急。','アクセス特急は京成成田に停まりません。京成本線経由の列車へ。','Access Express runs on the Sky Access line and skips Keisei Narita. Take a train "via Keisei Main Line", or change at Aoto.'],
+  body:['上車前看月台電子看板或問站務員。','乗る前に表示を確認。','Check the platform board or ask staff before boarding.'],phr:['narita']}
+];
+/* ---------- station guides ---------- */
+const GKIND={metro:['🚇 地鐵指引','🚇 地下鉄ガイド','🚇 Subway guide'],train:['🚉 轉乘指引','🚉 乗換ガイド','🚉 Transfer guide'],bus:['🚌 搭車指引','🚌 バス乗り場','🚌 Bus stop guide'],walk:['🚶 怎麼走','🚶 道案内','🚶 Walking guide']};
+const GUIDES={
+ narita_sky:{kind:'train',v:'part',t:['成田機場 → Skyliner 月台','成田空港 → スカイライナー乗り場','Narita Airport → Skyliner platform'],
+  steps:[
+   [['入境、領完行李出到 1 樓入境大廳，找「鉄道」指標，往地下 1 樓走。','到着ロビー（1階）から「鉄道」の案内に従い地下1階へ。','From the arrivals hall (1F), follow the "Railways" signs down to B1.'],'鉄道 Railways','成田空港駅 京成線'],
+   [['到 B1 京成售票處，出示 KKday 憑證，12 人一起換 7:23 同一班的座位。','京成の窓口でKKdayバウチャーを提示、12名同じ便に引き換え。','At the Keisei ticket counter on B1, show the KKday vouchers and get 12 seats on the 7:23 train.'],'京成線 Keisei Line ／ スカイライナー Skyliner','京成 スカイライナー 成田空港駅 チケットカウンター'],
+   [['進京成改札，下到 B2 月台。Skyliner 全車對號，照車票上的「號車」排隊。','京成改札を通り地下2階のホームへ。切符の号車に並ぶ。','Through the Keisei gates down to the B2 platform. All seats are reserved; queue at the car number on your ticket.'],'スカイライナー 京成上野 Keisei Ueno',''],
+   [['如果飛機停第 2 或第 3 航廈，車站叫「空港第2ビル」，同一班車 7:27 開。','第2・第3ターミナルなら「空港第2ビル駅」、同じ列車が7:27発。','If you land at Terminal 2 or 3, the station is "Airport Terminal 2"; the same train leaves at 7:27.'],'空港第2ビル Airport Terminal 2','空港第2ビル駅']
+  ],tips:[['先確認航班停哪個航廈。','到着ターミナルを確認。','Check your arrival terminal first.'],['Skyliner 要坐第 7 號車：到京成上野時最靠近上行電扶梯。','7号車が京成上野の上りエスカレーターに近い。','Ask for car 7: it stops nearest the up escalator at Keisei Ueno.']]},
+ ueno_transfer:{kind:'train',v:'part',t:['京成上野 → JR 上野 新幹線','京成上野 → JR上野 新幹線','Keisei Ueno → JR Ueno Shinkansen'],
+  steps:[
+   [['Skyliner 從第 7 號車下車，最靠近上行樓梯和電扶梯。','スカイライナーは7号車付近に上りエスカレーター。','Get off from car 7; the up stairs and escalator are right there.'],'',''],
+   [['上到 B1 出京成改札，左轉沿通道走到底的「正面口」，搭電扶梯上到地面。','地下1階の改札を出て左、突き当たりの「正面口」からエスカレーターで地上へ。','Exit the Keisei gates on B1, turn left, walk to the end to the "Main Exit", escalator up to street level.'],'正面口','京成上野駅 正面口'],
+   [['出站後左轉沿著馬路走，過紅綠燈，從 JR 的高架鐵橋下面穿過去。','地上に出たら左へ。信号を渡りJRの高架下をくぐる。','Turn left on the street, cross at the light and pass under the JR railway bridge.'],'',''],
+   [['鐵橋正下方的「不忍口」不要進去，繼續直走；過橋後左手邊的「広小路口」進去。','高架下の「不忍口」は通り過ぎ、その先左手の「広小路口」から入る。','Walk past the "Shinobazu Exit" under the bridge; enter at the "Hirokoji Exit" on your left just after.'],'広小路口','JR上野駅 広小路口'],
+   [['直走到「中央改札」。改札前右手邊有售票處和指定席售票機，左手邊是綠色窗口「みどりの窓口」，在這裡買新幹線票。','「中央改札」へ直進。手前右に券売機、左にみどりの窓口。','Go straight to the "Central Gate". Ticket machines are on the right before it, the green "Midori-no-madoguchi" desk on the left.'],'中央改札 ／ みどりの窓口','JR上野駅 中央改札'],
+   [['進中央改札後往右前方，找柱子上紅框的「↑新幹線 19-22」，一直走到「新幹線のりかえ口」。','改札内を右前方へ。赤枠の「↑新幹線 19-22」の柱を目印に新幹線のりかえ口へ。','Inside, bear right and look for the red-framed pillar sign "↑新幹線 19-22", then go straight to the Shinkansen transfer gate.'],'↑新幹線 19－22 ／ 新幹線のりかえ口',''],
+   [['過新幹線改札後一路搭下行電扶梯：B2 → B3 → B4 月台（19、20 號）。帶大行李的人走到底左轉搭電梯。','新幹線改札から下りエスカレーターでB4ホーム（19・20番線）へ。荷物が多い人は奥のエレベーター。','After the Shinkansen gate, take the down escalators B2 → B3 → B4 (platforms 19–20). With big bags, go to the end and turn left for the elevator.'],'19・20番線 北陸新幹線','']
+  ],tips:[['整段至少抓 15 分鐘，12 人加行李可能更久。','乗換は最低15分。','Allow at least 15 minutes; longer with 12 people and bags.']]},
+ nagano_bus:{kind:'bus',v:'ok',t:['長野站 → 東口 26 號巴士站（往白馬）','長野駅 → 東口26番のりば（白馬行き）','Nagano Sta. → East Exit stop 26 (to Hakuba)'],
+  steps:[
+   [['出新幹線改札前先到 2 樓綠色窗口旁的售票機買巴士票（2 台，收現金）。','2階みどりの窓口横の券売機（2台）でバス券を購入。','First buy bus tickets at the 2 machines beside the JR ticket office on 2F (cash).'],'みどりの窓口 ／ 白馬 特急バス','JR長野駅 みどりの窓口'],
+   [['跟著「東口」指標走，從東口的樓梯下到地面（有電扶梯和電梯）。','「東口」の案内に従い、階段（エスカレーター・エレベーターあり）で地上へ。','Follow the "East Exit" signs and go down to street level (escalator and elevator available).'],'東口 East Exit','長野駅 東口'],
+   [['走到 26 號乘車處，大約 7 分鐘。冬季有些班次改在 25 號，看站牌和現場工作人員。','26番のりばへ（約7分）。冬は一部25番発。','Walk to stop 26 (about 7 min). In winter some buses leave from stop 25; check the sign and staff.'],'26番のりば 白馬','長野駅東口 バス 26番のりば']
+  ],tips:[['不要走到「善光寺口」那一側，那是另一邊。','「善光寺口」は反対側。','Don\'t go out the Zenkoji Exit; it\'s the other side.'],['大行李放巴士下層行李廂。','大きな荷物はトランクへ。','Big bags go in the hold.']]},
+ toyoko:{kind:'walk',v:'tbc',t:['長野站 → 東橫 INN 長野站東口','長野駅 → 東横INN長野駅東口','Nagano Sta. → Toyoko Inn East Exit'],
+  steps:[
+   [['巴士在長野站東口下車，飯店在東口這一側，步行約 4–7 分鐘。','東口でバスを降り、徒歩4–7分。','The bus drops you at the East Exit; the hotel is on that side, 4–7 min on foot.'],'東口','東横INN長野駅東口'],
+   [['用 Google 地圖導航最準。先寄行李，15:00 才能入住。','地図アプリで案内。15時チェックイン。','Use Google Maps. Drop bags; check-in is 15:00.'],'','東横INN長野駅東口']
+  ],tips:[]},
+ nagano_zenkoji:{kind:'bus',v:'part',t:['長野站 → 善光寺（巴士）','長野駅 → 善光寺（バス）','Nagano Sta. → Zenkoji (bus)'],
+  steps:[
+   [['從東口那側穿過車站，走到另一邊的「善光寺口」。','東口から駅を通り抜け「善光寺口」へ。','Walk through the station from the East side to the "Zenkoji Exit".'],'善光寺口 Zenkoji Exit','長野駅 善光寺口'],
+   [['從善光寺口走樓梯下到巴士轉運站（有電扶梯、電梯），約 5 分鐘到 1 號乘車處。','階段で下り、1番のりばへ（約5分）。','Go down to the bus terminal (escalator and elevator), about 5 min to stop 1.'],'1番のりば','長野駅 善光寺口 1番のりば'],
+   [['1 號乘車處的巴士全部經過善光寺。上車前問司機「善光寺大門に行きますか？」，在「善光寺大門」下車。','1番のりばのバスはすべて善光寺経由。「善光寺大門」で下車。','Every bus from stop 1 passes Zenkoji. Check with the driver and get off at "Zenkoji Daimon".'],'善光寺大門','善光寺大門 バス停']
+  ],tips:[['回程在同一站對面搭往長野站的車。','帰りは反対側から長野駅行き。','Return from the opposite stop toward Nagano Station.']]},
+ ueno_ginza:{kind:'metro',v:'part',t:['上野 新幹線 → 銀座線 → 田原町','上野 新幹線 → 銀座線 → 田原町','Ueno Shinkansen → Ginza Line → Tawaramachi'],
+  steps:[
+   [['新幹線第 4 號車前門下車，最靠近上行樓梯和電扶梯；帶大行李搭電梯就坐第 6 號車。','4号車前寄りに上りエスカレーター、エレベーターは6号車前寄り。','Car 4, front door is nearest the up escalator; car 6 front for the elevator.'],'',''],
+   [['一路往上：B3 → B1 → 1 樓，右後方直走到「JR線のりかえ口」。','B3→B1→1階、右後方の「JR線のりかえ口」へ。','Go up B3 → B1 → 1F, then back to the right to the "JR Lines Transfer" gate.'],'JR線のりかえ口',''],
+   [['往 NewDays 便利商店的方向直走到「中央改札」出站。','NewDays方向へ直進し「中央改札」を出る。','Head past NewDays straight to the "Central Gate" and exit.'],'中央改札',''],
+   [['出中央改札後左轉，找「銀座線 日比谷線」指標，走樓梯往下。','改札を出て左、「銀座線 日比谷線」の案内で階段を下りる。','Turn left and follow "Ginza Line / Hibiya Line" signs down the stairs.'],'銀座線 G 日比谷線 H','東京メトロ 上野駅 銀座線'],
+   [['到銀座線「JR上野駅方面改札」（B1），刷 Suica 進站，右轉找紅色「2」的樓梯下到 2 號月台（往浅草）。','銀座線「JR上野駅方面改札」から2番線（浅草方面）へ。','Through the Ginza Line "JR Ueno Station" gate (B1), turn right and take the stairs marked red "2" to platform 2 (for Asakusa).'],'2 浅草 Asakusa',''],
+   [['坐 2 站到「田原町」（約 3 分鐘），出 3 號出口。','2駅目「田原町」で下車、3番出口へ。','Ride 2 stops to "Tawaramachi" (~3 min), take Exit 3.'],'田原町 Tawaramachi ／ 3','田原町駅 3番出口'],
+   [['出 3 號出口後用 Google 地圖導航到浅草ビューホテル，約 7 分鐘。','3番出口から浅草ビューホテルまで徒歩約7分。','From Exit 3, walk about 7 minutes to Asakusa View Hotel (use Google Maps).'],'浅草ビューホテル','浅草ビューホテル']
+  ],tips:[['12 人帶行李嫌麻煩的話，上野站搭 3 台計程車直接到飯店也很方便。','荷物が多ければタクシー3台も便利。','With luggage, 3 taxis from Ueno straight to the hotel is an easy alternative.']]},
+ oshiage_hotel:{kind:'metro',v:'part',t:['晴空塔（押上）→ 淺草豪景酒店','押上 → 浅草ビューホテル','Oshiage (Skytree) → Asakusa View Hotel'],
+  steps:[
+   [['在押上站搭都營淺草線往「西馬込」方向，坐到「浅草」。','押上から都営浅草線（西馬込方面）で浅草へ。','At Oshiage, take the Toei Asakusa Line toward Nishi-magome to "Asakusa".'],'都営浅草線 A 西馬込方面','押上駅 都営浅草線'],
+   [['在浅草站從第 5 號車前門下車，樓梯上去是「雷門方面改札」（A3–A5 出口）。','5号車前寄りの階段で「雷門方面改札」へ。','Get off from car 5, front door: the stairs lead to the "Kaminarimon" gate (Exits A3–A5).'],'雷門方面','都営浅草線 浅草駅'],
+   [['出站後沿雷門通往西走到國際通，右轉往北，約 10 分鐘到飯店。','雷門通りを西へ、国際通りを右（北）へ約10分。','Walk west along Kaminarimon-dori to Kokusai-dori, turn right (north); about 10 min.'],'国際通り','浅草ビューホテル']
+  ],tips:[['晚上累了的話，晴空塔前搭 3 台計程車到飯店最省事。','疲れていればタクシーで。','If everyone is tired, 3 taxis from Skytree are the easy option.']]},
+ hotel_toei:{kind:'metro',v:'tbc',t:['淺草豪景酒店 → 都營淺草站 → 京成成田','ホテル → 都営浅草駅 → 京成成田','Hotel → Toei Asakusa Sta. → Keisei Narita'],
+  steps:[
+   [['飯店走到都營淺草線淺草站約 10 分鐘：國際通往南，左轉雷門通往東。','国際通りを南へ、雷門通りを東へ約10分。','About 10 min: south on Kokusai-dori, left (east) on Kaminarimon-dori.'],'都営浅草線 A','都営浅草線 浅草駅'],
+   [['拖大行李找有電梯標誌的出入口（原行程寫 A2b，待確認），進「雷門方面改札」。','エレベーターのある出入口から「雷門方面改札」へ。','Use an entrance with an elevator (the plan says A2b; to be confirmed) to the "Kaminarimon" gate.'],'エレベーター ／ 雷門方面',''],
+   [['到 2 號月台（往押上・成田空港）。電梯在第 7 號車附近。','2番線（押上・成田空港方面）。エレベーターは7号車付近。','Platform 2 (toward Oshiage / Narita Airport). The elevator is near car 7.'],'2 押上・成田空港方面',''],
+   [['只上車頭寫「京成本線経由」的特急或快速；寫「アクセス特急」的不要搭。不確定就在「青砥」下車換京成本線特急。','「京成本線経由」の列車に乗る。アクセス特急は不可。迷ったら青砥で乗換。','Board only trains marked "via Keisei Main Line". Not the Access Express. If unsure, change at Aoto to a Keisei Main Line limited express.'],'京成本線経由 ／ ✕ アクセス特急',''],
+   [['在「京成成田」下車，不是機場站。','「京成成田」で下車。','Get off at "Keisei Narita", not the airport.'],'京成成田 Keisei-Narita','京成成田駅']
+  ],tips:[['上車前可以出示日文小抄問站務員。','駅員に確認を。','Show the phrase card to station staff before boarding.']]},
+ keisei_narita:{kind:'walk',v:'part',t:['京成成田站 → 成田山表參道','京成成田駅 → 成田山表参道','Keisei Narita → Naritasan Omotesando'],
+  steps:[
+   [['先在站內找置物櫃放大行李（位置以站內圖為準）。放不下就去 JR 成田站或觀光案內所。','駅のコインロッカーへ。満杯ならJR成田駅か観光案内所。','Find the coin lockers first (see the station map). If full, try JR Narita or the tourist office.'],'コインロッカー Coin Lockers','京成成田駅 コインロッカー'],
+   [['從「參道口」出站，對面就是 JR 成田站的參道口。','「参道口」から出る。JR成田駅の参道口と向かい合わせ。','Leave by the "Sando Exit"; JR Narita\'s Sando Exit faces it.'],'参道口',''],
+   [['走到 JR 成田站前的路口，從那裡進入表參道，一路往下坡走到成田山新勝寺。沿路是老店、伴手禮店和刀具店。','JR成田駅前の交差点から表参道へ。新勝寺まで道なり。','From the JR Narita intersection, enter the Omotesando and follow it downhill to Shinshoji, past old shops.'],'成田山 表参道','成田山表参道'],
+   [['回程同一條路走回車站拿行李，京成本線坐 8–10 分鐘到機場；先確認航廈。','帰りは京成本線で空港へ（8–10分）。','Walk back, collect bags, Keisei Main Line to the airport (8–10 min). Check your terminal.'],'成田空港 ／ 空港第2ビル','']
+  ],tips:[]}
+};
+const GLINK={'1-07:23':'narita_sky','1-08:35':'ueno_transfer','1-11:20':'nagano_bus','4-10:30':'toyoko','4-11:45':'nagano_zenkoji','4-17:15':'nagano_zenkoji','5-10:45':'ueno_ginza','5-20:45':'oshiage_hotel','6-09:20':'hotel_toei','6-09:45':'hotel_toei','6-11:00':'keisei_narita','6-15:10':'keisei_narita'};
+function guideHTML(id){
+ const g=GUIDES[id];if(!g)return '';
+ const vk=g.v==='ok'?'open':'warn';
+ return `<div class="gwrap"><div class="ghead"><button class="btn sm" type="button" data-gclose>${U('back2')}</button><span class="pill ${vk}">${U('v_'+g.v)}</span></div>
+ <h2 class="gtitle">${esc(L(g.t))}</h2>
+ <ol class="gsteps">${g.steps.map(s=>`<li><div>${esc(L(s[0]))}</div>${s[1]?`<div class="sign"><span class="lbl">${U('lookFor')}</span><span class="txt">${esc(s[1])}</span></div>`:''}${s[2]?`<a class="small" href="${gmap(s[2])}" target="_blank" rel="noopener">📍 ${U('openMapSV')}</a>`:''}</li>`).join('')}</ol>
+ ${g.tips.length?`<div class="card small"><b>💡</b> ${g.tips.map(t=>esc(L(t))).join('<br>')}</div>`:''}
+ <p class="small muted">${U('guideNote')}</p></div>`;
+}
+function openGuide(id){const el=document.getElementById('guide');el.innerHTML=guideHTML(id);el.hidden=false;el.scrollTop=0;el.dataset.g=id}
+
+/* ---------- move options (12 people) ---------- */
+// o: [name, how, time, transfers, bag(1-3), pp[min,max] | null, pros, cons, rec, verified]
+const OPTS={
+ narita_hakuba:{t:['成田 → 白馬：整段怎麼去','成田 → 白馬：全体の移動方法','Narita → Hakuba: whole journey'],
+  intro:['這是全程最長的一段，12 人帶行李。四種走法比較：','一番長い移動。12名・荷物ありでの比較：','The longest leg, 12 people with luggage. Four ways to do it:'],
+  o:[
+   [['Skyliner＋新幹線＋巴士（目前行程）','スカイライナー＋新幹線＋バス（現行案）','Skyliner + Shinkansen + bus (current plan)'],['成田 7:23 → 上野 → 長野 → 白馬 12:30','成田7:23→上野→長野→白馬12:30','Narita 7:23 → Ueno → Nagano → Hakuba 12:30'],['約 5 小時','約5時間','~5 h'],3,2,[12600,13900],
+    ['班次多、準時，12:30 就到白馬','本数が多く正確','Frequent and punctual; in Hakuba by 12:30'],['換 3 次車，上野轉乘要拖行李走 15 分鐘','乗換3回、上野で荷物を持って15分歩く','3 changes; a 15-min walk with bags at Ueno'],1,'part'],
+   [['成田直達白馬接駁巴士（Nagano Snow Shuttle 等）','成田→白馬 直行シャトル','Narita → Hakuba airport shuttle'],['機場直接上車，坐到白馬','空港から白馬まで乗りっぱなし','Board at the airport, ride to Hakuba'],['約 5–6 小時','約5–6時間','~5–6 h'],0,3,[12500,12500],
+    ['不用轉車，行李放上車就不用管','乗換なし、荷物も楽','No changes; load bags once'],['要配合接駁班次，凌晨落地可能要等；票價為 2025 年參考','便に合わせる必要あり、料金は2025年参考','Must fit the shuttle schedule; early arrival may mean waiting. 2025 reference price'],0,'tbc'],
+   [['包車（門到門）','貸切車（ドアtoドア）','Private charter (door to door)'],['機場直接載到白馬住宿，12 人約需 2 台','空港から宿まで、12名で約2台','Airport to lodge; 12 people need ~2 vehicles'],['約 5 小時','約5時間','~5 h'],0,3,[21700,21700],
+    ['最省力，隨時出發、直接到住宿門口','一番楽、時間自由','Easiest; leave any time, drop at the door'],['最貴，一台約 ¥130,000（2025 參考，依車型）','最も高い（1台約¥130,000）','Most expensive: ~¥130,000 per vehicle (2025 ref.)'],0,'tbc'],
+   [['新宿高速巴士直達白馬','新宿→白馬 高速バス','Shinjuku → Hakuba highway bus'],['成田 → 新宿（電車或巴士）→ 巴士到白馬八方','成田→新宿→高速バスで白馬','Narita → Shinjuku, then bus to Hakuba Happo'],['約 7–8 小時','約7–8時間','~7–8 h'],2,2,[6500,10500],
+    ['最便宜','一番安い','Cheapest'],['最久，到白馬可能已經傍晚；冬季塞車風險','時間がかかる、渋滞リスク','Slowest; may arrive late afternoon; winter traffic risk'],0,'part']
+  ],note:['價格都是每人約略金額。包車以 2 台、每台約 ¥130,000 換算。','料金は1人あたりの目安。','Prices are rough per-person figures. Charter assumes 2 vehicles at ~¥130,000 each.']},
+ narita_ueno:{t:['成田機場 → 上野','成田空港 → 上野','Narita Airport → Ueno'],
+  intro:['平日早上往東京方向的電車是通勤尖峰，12 人帶行李要考慮擠不擠。','平日朝の都心方面は通勤ラッシュ。','Weekday mornings into Tokyo are rush hour; think about crowding with luggage.'],
+  o:[
+   [['Skyliner','スカイライナー','Skyliner'],['全車對號，直達京成上野','全席指定、京成上野まで直通','All reserved, direct to Keisei Ueno'],['65 分','65分','65 min'],0,3,[2470,2580],
+    ['有座位、有行李區，不怕通勤人潮；子菱已買 2 張','座れる・荷物置き場あり','Guaranteed seats and luggage space; Zi-Ling already has 2'],['比普通車貴一倍','料金は倍','About twice the regular fare'],1,'ok'],
+   [['Access 特急（高砂轉車）','アクセス特急（高砂乗換）','Access Express (change at Takasago)'],['刷 IC 卡，在京成高砂換車到上野','ICカード、京成高砂で乗換','IC card; change at Keisei Takasago'],['約 65 分','約65分','~65 min'],1,1,[1267,1280],
+    ['便宜一半，不用先買票','半額、予約不要','Half the price, no booking'],['通勤時段很擠，拖行李站一小時','ラッシュで混雑、立ちっぱなし','Packed at rush hour; standing with bags'],0,'ok'],
+   [['京成本線 快速','京成本線 快速','Keisei Main Line Rapid'],['刷 IC 卡，青砥換車','IC、青砥で乗換','IC card; change at Aoto'],['約 95 分','約95分','~95 min'],1,1,[1052,1060],
+    ['最便宜','最安','Cheapest'],['最慢、最擠，會趕不上 9:26 新幹線','遅く混む、9:26の新幹線に間に合わない','Slowest and crowded; misses the 9:26 train'],0,'ok']
+  ],note:['票價：Skyliner ¥2,470（官網日暮里）–¥2,580（原行程）；其他為駅探 IC 票價。','運賃は公式・駅探より。','Fares from Keisei and Ekitan.']},
+ ueno_nagano:{t:['上野 ↔ 長野（新幹線）','上野 ↔ 長野（新幹線）','Ueno ↔ Nagano (Shinkansen)'],
+  intro:['同一段路，坐法不同價錢差一點，12 人能不能坐一起是重點。','座席の種類で比較。12名が一緒に座れるかがポイント。','Same trip, different seat types. The key is whether 12 can sit together.'],
+  o:[
+   [['Kagayaki 指定席','かがやき 指定席','Kagayaki, reserved'],['全車對號，最快','全席指定、最速','All reserved, fastest'],['約 70–80 分','約70–80分','~70–80 min'],0,2,[7930,8130],
+    ['一定有座位，最快到','必ず座れる、最速','Guaranteed seat, fastest'],['現場買 12 個位子可能被拆散','当日だと席がバラバラの可能性','Buying on the day, 12 seats may be split up'],1,'ok'],
+   [['Hakutaka 自由席','はくたか 自由席','Hakutaka, unreserved'],['自由席車廂先到先坐','自由席車両に早めに並ぶ','First come, first seated'],['約 85 分','約85分','~85 min'],0,2,[7600,7600],
+    ['最便宜的新幹線，大家可以一起排隊坐同一節','新幹線で最安、まとまって座りやすい','Cheapest Shinkansen; the group can queue for one car'],['尖峰可能要站；比 Kagayaki 慢一點','混むと立つ可能性','Might stand if busy; a bit slower'],0,'ok'],
+   [['高速巴士（池袋／新宿 ↔ 長野）','高速バス（池袋・新宿↔長野）','Highway bus (Ikebukuro/Shinjuku ↔ Nagano)'],['要先到池袋或新宿搭車','池袋か新宿から乗車','Board at Ikebukuro or Shinjuku'],['約 3.5–4 小時','約3.5–4時間','~3.5–4 h'],1,2,[3000,4500],
+    ['便宜一半','半額程度','About half the price'],['多 2 小時以上，還要先跑到池袋或新宿，白馬行程會壓縮','2時間以上余計にかかる','2+ hours longer and you have to get to Ikebukuro/Shinjuku first'],0,'tbc']
+  ],note:['新幹線票價為上野–長野（閑散期 ¥7,930、通常期 ¥8,130），2 月中旬多半是閑散期。巴士價格為約略值。','新幹線は上野–長野の料金。','Shinkansen fares are Ueno–Nagano (off-peak ¥7,930, regular ¥8,130); mid-Feb is usually off-peak.']},
+ nagano_hakuba:{t:['長野站 ↔ 白馬','長野駅 ↔ 白馬','Nagano Station ↔ Hakuba'],
+  intro:['滑雪季的巴士是主要交通，包車適合行李多或要直接到住宿門口。','冬はバスが基本。荷物が多ければ貸切も。','The bus is the standard. A charter works if you want door-to-door with lots of luggage.'],
+  o:[
+   [['Alpico 特急巴士','アルピコ特急バス','Alpico express bus'],['長野站東口 ↔ 白馬八方巴士總站','長野駅東口↔白馬八方','Nagano East Exit ↔ Hakuba Happo'],['約 70–80 分','約70–80分','~70–80 min'],0,2,[2200,3200],
+    ['便宜，冬季班次多，大巴有行李廂','安い・本数多い・トランクあり','Cheap, frequent in winter, big luggage hold'],['到八方總站後還要走或接駁到住宿','バスターミナルから宿まで移動','Still need to get from the terminal to the lodge'],1,'part'],
+   [['包車（2 台）','貸切（2台）','Private charter (2 vehicles)'],['長野站直接到白馬住宿門口','長野駅から宿まで','Nagano Station to the lodge door'],['約 1–1.5 小時','約1–1.5時間','~1–1.5 h'],0,3,[9700,9700],
+    ['門到門，時間自由，不用排隊','ドアtoドア、時間自由','Door to door, any time, no queue'],['一台約 ¥58,100 起，2 台換算每人約 ¥9,700','1台¥58,100〜','From ~¥58,100 per vehicle; ~¥9,700 each with 2'],0,'tbc']
+  ],note:['巴士票價各網站寫法不一（¥2,200–3,200），以 Alpico 冬季票價表為準。','運賃は冬の料金表で確認。','Bus fares vary by source (¥2,200–3,200); confirm on Alpico\'s winter fare table.']},
+ nagano_zenkoji:{t:['長野站 ↔ 善光寺','長野駅 ↔ 善光寺','Nagano Station ↔ Zenkoji'],
+  intro:['距離約 2 公里，三種走法都可以。','約2km。','About 2 km; all three work.'],
+  o:[
+   [['路線巴士','路線バス','Local bus'],['善光寺口 1 號乘車處，到「善光寺大門」','善光寺口1番のりば→善光寺大門','Stop 1 at Zenkoji Exit → "Zenkoji Daimon"'],['10–15 分','10–15分','10–15 min'],0,2,[190,190],
+    ['便宜又快，可刷 IC 卡','安くて早い、IC可','Cheap, quick, IC card OK'],['12 人一次上車可能要分兩班','12名だと2便に分かれる可能性','12 people may need two buses'],1,'part'],
+   [['走路','徒歩','Walk'],['沿中央通一路上坡走到善光寺','中央通りを北へ','Up Chuo-dori to the temple'],['約 25–30 分','約25–30分','~25–30 min'],0,1,[0,0],
+    ['免費，沿路逛老街','無料、街歩き','Free; browse the old street'],['上坡；剛滑完兩天雪腳會痠','上り坂','Uphill, on tired ski legs'],0,'part'],
+   [['計程車（4 台）','タクシー（4台）','Taxis (4 cars)'],['善光寺口計程車招呼站','善光寺口のタクシー乗り場','Taxi rank at Zenkoji Exit'],['約 8–10 分','約8–10分','~8–10 min'],0,3,[300,500],
+    ['最快、不用等','早い','Fastest'],['要叫 4 台車','4台必要','Need 4 cars'],0,'tbc']
+  ],note:['計程車以每台約 ¥1,000–1,500、每台 3 人估算。','タクシーは1台3名で試算。','Taxis estimated at ~¥1,000–1,500 per car, 3 people each.']},
+ ueno_asakusa:{t:['上野 → 淺草豪景酒店（帶行李）','上野 → 浅草ビューホテル（荷物あり）','Ueno → Asakusa View Hotel (with luggage)'],
+  intro:['這段帶著大行李，方便比便宜重要。日本計程車後車廂小，抓每台 3 人。','荷物ありの移動。タクシーは1台3名想定。','You have all the luggage here. Japanese taxi trunks are small; assume 3 people per car.'],
+  o:[
+   [['銀座線＋走路','銀座線＋徒歩','Ginza Line + walk'],['上野 → 田原町 2 站，3 號出口走 7 分','上野→田原町（2駅）、3番出口から7分','2 stops to Tawaramachi, Exit 3, 7-min walk'],['約 25–30 分（含轉乘）','約25–30分','~25–30 min incl. transfer'],1,1,[180,180],
+    ['最便宜','最安','Cheapest'],['新幹線到銀座線要走樓梯、拖行李走一段','階段と徒歩あり','Stairs and a walk with luggage'],0,'part'],
+   [['計程車（4 台）','タクシー（4台）','Taxis (4 cars)'],['上野站計程車招呼站直接到飯店','上野駅タクシー乗り場から直行','Taxi rank at Ueno straight to the hotel'],['約 10–15 分','約10–15分','~10–15 min'],0,3,[500,700],
+    ['門到門，行李不用拖','ドアtoドア','Door to door, no dragging bags'],['要等 4 台車','4台待つ必要','Need to wait for 4 cars'],1,'tbc']
+  ],note:['計程車每台約 ¥1,500–2,000（約 2.5 公里）估算。','タクシー1台約¥1,500–2,000。','Taxis estimated at ~¥1,500–2,000 per car (~2.5 km).']},
+ oshiage_hotel:{t:['晴空塔 → 淺草豪景酒店（晚上）','スカイツリー → 浅草ビューホテル（夜）','Skytree → Asakusa View Hotel (evening)'],
+  intro:['晚上沒有大行李，選哪個都輕鬆。','夜・荷物なし。','No luggage this time; all easy.'],
+  o:[
+   [['都營淺草線＋走路','都営浅草線＋徒歩','Toei Asakusa Line + walk'],['押上 → 浅草 2 站，再走 10 分','押上→浅草、徒歩10分','2 stops to Asakusa, then 10-min walk'],['約 20 分','約20分','~20 min'],0,2,[180,180],
+    ['便宜','安い','Cheap'],['出站還要走 10 分鐘','駅から10分歩く','10-min walk after'],1,'part'],
+   [['計程車（3–4 台）','タクシー（3–4台）','Taxis (3–4 cars)'],['晴空塔前招呼站','スカイツリー前の乗り場','Rank at Skytree'],['約 10 分','約10分','~10 min'],0,3,[300,500],
+    ['不用走路','歩かない','No walking'],['要叫好幾台','台数が必要','Several cars'],0,'tbc'],
+   [['走路（夜景散步）','徒歩（夜景散歩）','Walk (night stroll)'],['過隅田川走回淺草','隅田川を渡って浅草へ','Cross the Sumida back to Asakusa'],['約 25–30 分','約25–30分','~25–30 min'],0,1,[0,0],
+    ['免費，可以回頭拍晴空塔夜景','無料、夜景','Free; Skytree night views behind you'],['冬天晚上冷','冬の夜は寒い','Cold winter night'],0,'part']
+  ],note:[]},
+ asakusa_narita:{t:['淺草 → 京成成田（最後一天，帶全部行李）','浅草 → 京成成田（最終日・全荷物）','Asakusa → Keisei Narita (last day, all luggage)'],
+  intro:['最後一天 12 人帶全部行李還要逛成田山，行李怎麼處理比搭什麼車更重要。','最終日は荷物の扱いがポイント。','Last day: what to do with the luggage matters more than which train.'],
+  o:[
+   [['電車＋車站置物櫃（目前行程）','電車＋コインロッカー（現行案）','Train + station lockers (current plan)'],['都營淺草線直通京成本線，京成成田寄櫃','京成本線経由、京成成田でロッカー','Toei Asakusa Line via Keisei Main Line; lockers at Keisei Narita'],['約 70–80 分','約70–80分','~70–80 min'],1,1,[1800,2150],
+    ['便宜','安い','Cheap'],['拖全部行李搭車；置物櫃可能不夠 12 人用','荷物を持って移動、ロッカー不足の可能性','Hauling all bags; lockers may run out for 12'],0,'part'],
+   [['行李宅配到機場＋輕裝搭電車','空港へ手荷物宅配＋手ぶら','Ship bags to the airport + travel light'],['前一天在飯店把行李寄到成田機場，隔天空手出發','前日にホテルから成田空港へ発送','Send bags from the hotel to Narita Airport the day before'],['約 70–80 分','約70–80分','~70–80 min'],1,3,[3100,4400],
+    ['空手逛成田山，不用找置物櫃，到機場櫃台直接領行李','手ぶらで観光、空港で受取','Explore hands-free; pick bags up at the airport counter'],['要前一天辦，每件另付運費','前日の手配と送料が必要','Book the day before; pay per bag'],1,'tbc'],
+   [['包車（2 台）','貸切（2台）','Private charter (2 vehicles)'],['飯店 → 成田山 → 機場，一路載','ホテル→成田山→空港','Hotel → Naritasan → airport'],['約 1–1.5 小時','約1–1.5時間','~1–1.5 h'],0,3,[5000,8000],
+    ['最輕鬆，行李一直放車上','最も楽','Easiest; bags stay in the vehicle'],['最貴，要事先預約','高い・要予約','Most expensive; book ahead'],0,'tbc']
+  ],note:['宅配以每人 1 件、運費約 ¥2,000–3,000 估算；包車價格為約略值。','宅配は1人1個・約¥2,000–3,000で試算。','Bag delivery assumes 1 bag each at ~¥2,000–3,000; charter is a rough estimate.']},
+ kn_airport:{t:['京成成田 → 成田機場','京成成田 → 成田空港','Keisei Narita → Narita Airport'],
+  intro:['只有 10 分鐘車程。','10分程度。','Only about 10 minutes.'],
+  o:[
+   [['京成本線','京成本線','Keisei Main Line'],['京成成田上車到機場站','京成成田から空港駅へ','Keisei Narita to the airport stations'],['約 8–10 分','約8–10分','~8–10 min'],0,2,[270,270],
+    ['便宜、班次多','安い・本数多い','Cheap, frequent'],['要先回車站拿行李','駅でロッカーの荷物を回収','Collect bags at the station first'],1,'part'],
+   [['計程車（4 台）','タクシー（4台）','Taxis (4 cars)'],['車站前招呼站到航廈門口','駅前から各ターミナルへ','Station rank to the terminal door'],['約 15–20 分','約15–20分','~15–20 min'],0,3,[1000,1400],
+    ['直接到航廈門口','ターミナル前まで','Right to the terminal door'],['比電車貴很多','電車より高い','Much pricier than the train'],0,'tbc']
+  ],note:['計程車以每台約 ¥3,000–4,000、每台 3 人估算。','タクシー1台約¥3,000–4,000。','Taxis estimated at ~¥3,000–4,000 per car.']}
+};
+const OLINK={'1-07:23':['narita_hakuba','narita_ueno'],'1-09:26':['ueno_nagano'],'1-11:20':['nagano_hakuba'],'4-09:10':['nagano_hakuba'],'4-11:45':['nagano_zenkoji'],'4-17:15':['nagano_zenkoji'],'5-09:17':['ueno_nagano'],'5-10:45':['ueno_asakusa'],'5-20:45':['oshiage_hotel'],'6-09:45':['asakusa_narita'],'6-15:10':['kn_airport']};
+const stars=n=>'🧳'.repeat(n)+'<span style="opacity:.25">'+'🧳'.repeat(3-n)+'</span>';
+function voteTally(key){
+ const t={};let mine=null;
+ if(SYNC.db&&SYNC.crewOK){Object.entries(SYNC.crew).forEach(([id,c])=>{const v=c&&c.votes&&c.votes[key];if(v!=null){(t[v]=t[v]||[]).push(id)}});mine=myState().votes[key]}
+ else{mine=myState().votes[key];if(mine!=null)t[mine]=['local']}
+ return {t,mine};
+}
+function optsHTML(key){
+ const g=OPTS[key];if(!g)return '';
+ const {t,mine}=voteTally(key);
+ const yen0=(a,b)=>a===0&&b===0?U('free'):range(a,b);
+ return `<div class="gwrap"><div class="ghead"><button class="btn sm" type="button" data-gclose>${U('back2')}</button></div>
+ <h2 class="gtitle">${esc(L(g.t))}</h2><p style="margin:0">${esc(L(g.intro))}</p>
+ <div class="opts">${g.o.map((o,i)=>{const voters=t[i]||[];return `<div class="card opt${o[8]?' rec':''}${mine===i?' mine':''}">
+  <div class="opt-top"><h3>${esc(L(o[0]))}</h3><div class="chips">${o[8]?`<span class="pill must">${U('recommend')}</span>`:''}<span class="pill ${o[9]==='ok'?'open':'warn'}">${U('v_'+o[9])}</span></div></div>
+  <div class="small muted">${esc(L(o[1]))}</div>
+  <dl class="kv ostats"><dt>${U('oTime')}</dt><dd class="num">${esc(L(o[2]))}</dd><dt>${U('oXfer')}</dt><dd>${o[3]===0?U('noXfer'):U('xferN',o[3])}</dd><dt>${U('oBag')}</dt><dd>${stars(o[4])}</dd>
+  <dt>${U('per')}</dt><dd class="num"><b>${yen0(o[5][0],o[5][1])}</b></dd><dt>${U('all')}</dt><dd class="num">${yen0(o[5][0]*GROUP,o[5][1]*GROUP)}</dd></dl>
+  <div class="pc"><div><b style="color:var(--ok)">＋</b> ${esc(L(o[6]))}</div><div><b style="color:var(--red)">－</b> ${esc(L(o[7]))}</div></div>
+  <div class="vrow"><button class="btn sm ${mine===i?'d':''}" type="button" data-vote="${key}" data-oi="${i}">${mine===i?'✓ '+U('myPick'):U('pickThis')}</button>
+  ${SYNC.db&&SYNC.crewOK?`<span class="small muted">${voters.length?`${U('votes',voters.length)}：${voters.map(id=>esc(who(id))).join('、')}`:''}</span>`:''}</div>
+ </div>`}).join('')}</div>
+ ${L(g.note)?`<p class="small muted">${esc(L(g.note))}</p>`:''}
+ <p class="small muted">${SYNC.db&&SYNC.crewOK?U('voteSync'):U('voteLocal')}</p></div>`;
+}
+function openOpts(key){const el=document.getElementById('guide');el.innerHTML=optsHTML(key);el.hidden=false;el.scrollTop=0;el.dataset.o=key;delete el.dataset.g}
+
+const WHY=[
+ [['成田 → 上野搭 Skyliner（7:23）','スカイライナー（7:23）','Skyliner at 7:23'],['原行程的 06:40 班次不存在，7:23 是平日第一班。平日早上普通車是通勤尖峰，12 人拖行李站一小時太辛苦。','6:40発は存在せず、7:23が始発。普通列車は通勤ラッシュ。','The 06:40 in the original plan doesn\'t exist; 7:23 is the first weekday train. Regular trains are packed at rush hour.']],
+ [['新幹線改搭 9:26 Kagayaki 507','新幹線は9:26かがやき507号','Shinkansen: 9:26 Kagayaki 507'],['原本只留 10 分鐘轉乘，12 人還要現場買票一定來不及。改搭這班有 50 分鐘買票；買不到就搭 9:38 Hakutaka 自由席。','乗換10分では間に合わないため。','The original 10-minute transfer was impossible for 12 people buying tickets. This gives 50 minutes; fallback is the 9:38 Hakutaka unreserved.']],
+ [['巴士 12 月再確認','バスは12月に再確認','Buses: recheck in December'],['冬季時刻表還沒公布。12/17、12/20 先看新時刻表：能預約就訂 12 人，不能預約就當天提早排隊。','冬ダイヤ未発表。','Winter timetable isn\'t out. On Dec 17/20: book 12 if bookable, otherwise queue early.']],
+ [['2/20 在長野站先買隔天新幹線','2/20に翌日の新幹線を購入','Buy Feb 21 tickets on Feb 20'],['隔天早上 9:17 直接進站，不用 12 人一起排隊買票。','翌朝並ばずに済む。','No queue the next morning.']],
+ [['最後一天不要搭 Access 特急','最終日はアクセス特急に乗らない','Last day: not the Access Express'],['它不停京成成田站。要搭「京成本線経由」的車。也可以考慮前一天把行李宅配到機場，空手逛成田山。','京成成田に停まらない。手荷物宅配も検討。','It skips Keisei Narita. Take a Keisei Main Line train, and consider shipping bags to the airport.']],
+ [['每段移動都可以投票','移動方法は投票で','Vote on each transfer'],['行程卡片上按「比較方案」看價錢和差別，選好按「我選這個」。','各カードの「比較」から選択。','Tap "Compare options" on any card and pick one.']]
+];
+function lineSummary(){
+ const z=(a)=>a[0];
+ let t='🏂 白馬滑雪團 2027/2/17–2/22（12 人）\n\n【建議班次】\n';
+ SCHED.forEach(r=>{t+=`${r[0]} ${z(r[1])}：${z(r[2])}（備案：${z(r[3])}）\n`});
+ t+='\n【為什麼這樣排】\n';
+ WHY.forEach((w,i)=>{t+=`${i+1}. ${z(w[0])}：${z(w[1])}\n`});
+ t+='\n【交通任務】\n';
+ TASKS.forEach(k=>{const st=taskState(k);t+=`${st.k==='done'?'✅':'⬜'} ${z(k.t)}（${st.txt}）\n`});
+ t+='\n完整行程、轉乘指引、方案投票都在網站上，請點連結看 👇';
+ return t;
+}
+
+const SCHED=[
+ ['2/17',['成田 → 京成上野','成田 → 京成上野','Narita → Keisei Ueno'],['Skyliner 2 號 7:23 → 8:29','スカイライナー2号 7:23→8:29','Skyliner No.2 7:23 → 8:29'],['Skyliner 4 號 8:12 → 9:16','4号 8:12→9:16','No.4 8:12 → 9:16'],'ok'],
+ ['2/17',['上野 → 長野','上野 → 長野','Ueno → Nagano'],['Kagayaki 507 9:26 → 10:44','かがやき507号 9:26→10:44','Kagayaki 507 9:26 → 10:44'],['Hakutaka 557 9:38 → 11:03（自由席）','はくたか557号 9:38→11:03（自由席）','Hakutaka 557 9:38 → 11:03 (unreserved)'],'part'],
+ ['2/17',['長野 → 白馬八方','長野 → 白馬八方','Nagano → Hakuba'],['Alpico 11:20 → 12:30','アルピコ 11:20→12:30','Alpico 11:20 → 12:30'],['12:30 → 13:40','12:30→13:40','12:30 → 13:40'],'tbc'],
+ ['2/20',['白馬八方 → 長野','白馬八方 → 長野','Hakuba → Nagano'],['Alpico 9:10 → 約 10:20','アルピコ 9:10→約10:20','Alpico 9:10 → ~10:20'],['10:10 發','10:10発','10:10'],'tbc'],
+ ['2/21',['長野 → 上野','長野 → 上野','Nagano → Ueno'],['Kagayaki 504 9:17 → 上野 10:31','かがやき504号 9:17→上野10:31','Kagayaki 504 9:17 → Ueno 10:31'],['Hakutaka 556 9:47 → 11:14（自由席）','はくたか556号 9:47→11:14（自由席）','Hakutaka 556 9:47 → 11:14 (unreserved)'],'ok'],
+ ['2/22',['淺草 → 京成成田','浅草 → 京成成田','Asakusa → Keisei Narita'],['9:45 前後「京成本線経由」特急／快速','9:45頃 京成本線経由の列車','~9:45, a train via Keisei Main Line'],['青砥換京成本線特急','青砥で乗換','Change at Aoto'],'part'],
+ ['2/22',['京成成田 → 成田機場','京成成田 → 成田空港','Keisei Narita → Airport'],['15:10 前後京成本線，8–10 分','15:10頃 京成本線','~15:10, 8–10 min'],['航班時間確定後再調','便が決まり次第調整','Adjust once flight is set'],'tbc']
+];
+
+const HELP=[
+ ['📄',['打開就是「簡易頁」','最初は「一覧」','It opens on the Simple page'],['最上面的「現在」卡片會照日本時間自動顯示：出發前倒數、旅途中「進行中」或「移動中」、下一站是什麼。下面是 6 天行程，已過去的會變淡打勾，正在進行的是黃底。','「いま」カードが日本時間で自動更新。','The "Right now" card updates on Japan time: countdown before the trip, then what\'s happening and what\'s next. Past items fade with a tick; the current one is yellow.']],
+ ['🗂️',['上面一排分頁可以左右滑','上のタブは横スクロール','Swipe the tabs at the top'],['簡易頁＝全部行程一頁看完；總覽＝交通任務、建議班次、住宿、日文小抄；Day 1–6＝每天的詳細行程。在簡易頁點某一天的標題也能直接進去。','一覧・概要・各日の詳細。','Simple = everything on one page; Overview = bookings, trains, stays, phrases; Day 1–6 = each day in detail. Tap a day title on the Simple page to jump in.']],
+ ['👆',['點行程卡片看細節','カードをタップで詳細','Tap a card for details'],['會展開：怎麼去、怎麼付錢、費用（每人和 12 人）、地址（點了開 Google 地圖）、提醒。','移動・支払い・費用・住所。','It expands: how to get there, how to pay, cost (each and for 12), address (opens Google Maps), notes.']],
+ ['🚉',['黃色按鈕＝轉乘指引','黄色ボタン＝乗換ガイド','Yellow button = transfer guide'],['一步一步告訴你坐第幾節車廂、走哪個出口、要找哪個日文指標。深藍色框裡的字就是現場招牌上的字，照著找。點地圖連結可以切街景看實際畫面。','号車・出口・案内表示。','Step by step: which car, which exit, which Japanese sign to look for (the dark-blue box). Map links open Street View.']],
+ ['🔀',['白色按鈕＝比較方案，可以投票','白ボタン＝比較・投票','White button = compare options and vote'],['同一段路的幾種走法，比時間、轉乘、帶行李方便度、價錢。喜歡哪個就按「我選這個」，大家的選擇會一起顯示。','時間・乗換・荷物・料金を比較。','Several ways to make the same trip, compared by time, changes, luggage and price. Tap "I pick this"; everyone\'s picks show up.']],
+ ['🎒',['出門清單和任務賓果','持ち物とビンゴ','Packing list and bingo'],['每天的頁面下方有「今天出門帶」可以打勾，紅色「必帶」一定要帶。賓果完成一格點一下，連成一線就贏。','必須品は赤タグ。','Each day has a packing list (red tags are musts) and a bingo card: tap what you did, get a line to win.']],
+ ['🇯🇵',['日文小抄給店員看','日本語メモ','Show Japanese phrases to staff'],['虛線框的日文句子點一下會全螢幕放大，直接拿手機給店員、站務員、司機看。總覽頁有分類整理。','タップで全画面表示。','Tap a dashed-border phrase to show it full-screen to staff or drivers. The Overview page has them all by category.']],
+ ['💱',['右下角黃色圓形＝匯率換算','右下＝為替換算','Bottom-right yellow circle = currency'],['輸入日圓馬上換成台幣，反過來也可以。匯率可以自己改。','円⇄台湾ドル。','Yen ⇄ NT$, both ways. You can edit the rate.']],
+ ['🌐',['中／日／英切換','言語切替','Switch language'],['右上角切換語言。中文和英文版會附日文小抄，日文版不會重複顯示。','右上で切替。','Top-right. Chinese and English versions include the Japanese phrase cards.']],
+ ['🔄',['打勾只存在自己的手機','チェックは各自の端末に保存','Ticks stay on your own phone'],['出門清單、賓果、投票都只記在你自己的手機。交通任務和行前準備的進度由負責人更新網站，重新整理就看得到。','進捗は担当者がサイトを更新。','Packing, bingo and votes are saved on your phone only. The organiser updates booking and prep progress on the site; refresh to see it.']],
+ ['📲',['建議加到手機主畫面','ホーム画面に追加','Add it to your home screen'],['從 LINE 點開後，選「用瀏覽器開啟」（Safari 或 Chrome），再用分享選單「加入主畫面」，之後就像 App 一樣一點就開。','ブラウザで開いてホーム画面に追加。','Open the link in Safari or Chrome (not inside LINE), then use Share → Add to Home Screen. It opens like an app.']]
+];
+function helpHTML(){
+ return `<div class="gwrap"><div class="ghead"><button class="btn sm" type="button" data-gclose>${U('closeHelp')}</button></div>
+ <h2 class="gtitle">❓ ${U('helpT')}</h2>
+ <div class="opts">${HELP.map(x=>`<div class="card" style="display:flex;gap:12px;align-items:flex-start"><span style="font-size:30px;line-height:1">${x[0]}</span><div style="min-width:0"><h3 style="margin:0 0 4px">${esc(L(x[1]))}</h3><div class="small">${esc(L(x[2]))}</div></div></div>`).join('')}</div>
+ <div class="links"><button class="btn y" type="button" id="copyHelp">📋 ${U('copyHelp')}</button></div>
+ <textarea id="helpText" readonly hidden style="width:100%;min-height:200px;font:inherit;font-size:14px;border:2px solid var(--line);border-radius:12px;padding:10px;background:var(--card2);color:var(--ink)"></textarea>
+ <div class="small muted" id="helpMsg" aria-live="polite"></div></div>`;
+}
+function openHelp(){const el=document.getElementById('guide');el.innerHTML=helpHTML();el.hidden=false;el.scrollTop=0;store.set('helpSeen',true)}
+
+const MISSING=[
+ ['✈️',['去程、回程航班','往復の便','Outbound and return flights'],['航班編號、起降時間、成田第幾航廈。會影響 2/17 幾點搭 Skyliner、2/22 幾點去機場。','便名・時刻・ターミナル','Flight numbers, times and Narita terminal; sets the Skyliner and airport timing.']],
+ ['🏔️',['白馬住宿','白馬の宿','Hakuba lodging'],['名稱、地址、有沒有接駁車、離八方巴士總站多遠、早餐有沒有含。','名称・住所・送迎','Name, address, shuttle, distance to the Happo bus terminal, breakfast.']],
+ ['🎿',['雪具租借店','レンタルショップ','Ski rental shop'],['店名、預約幾點、租哪些（板、鞋、安全帽、雪衣）。','店名・予約時間','Shop, booking time, what\'s rented.']],
+ ['⛷️',['兩天各去哪個雪場、雪票怎麼買','各日のゲレンデとリフト券','Which resort each day and lift passes'],['八方、五龍、47、岩岳？一日券還是多日券（白馬通用券）？','1日券か共通券か','Happo, Goryu, 47, Iwatake? Day passes or a multi-resort pass?']],
+ ['👥',['12 人名單和房間分配','12名の名簿と部屋割り','Names and room plan'],['只要名字（暱稱也可）就好，用來排房間和分組搭車。','名前のみ','Just names or nicknames, for rooms and taxi groups.']],
+ ['🧳',['有沒有人帶自己的雪板或大型行李','自前の板・大型荷物','Own skis/boards or oversized bags'],['三邊合計超過 160 公分要預約新幹線特大行李座位。','160cm超は特大荷物席','Over 160 cm total needs an oversized-baggage seat on the Shinkansen.']],
+ ['🥩',['燒肉訂哪一家、用誰的名字訂','焼肉の店と予約名','Yakiniku: which place, whose name'],['日文小抄的訂位句子要改成訂位人的名字。','予約名','So the Japanese phrase card shows the right name.']],
+ ['💴',['付款方式','支払い方法','How the group pays'],['交通費要一人一票各自付，還是有公費統一付？會影響 Skyliner、巴士要不要一次買 12 張。','個別か共通費か','Each pays their own or a shared fund? Decides whether you buy 12 tickets at once.']]
+];
+const PREP=[
+ ['prep-passport',null,['護照效期確認','パスポート期限','Check passport validity'],['入境日本時護照要在有效期內，名字拼法要跟機票一樣。','','Valid on entry; name must match the ticket.']],
+ ['prep-insure',null,['旅遊平安險＋滑雪受傷保障','旅行保険（スキー）','Travel insurance incl. skiing'],['滑雪受傷在日本就醫很貴，確認保單有含滑雪。','','Ski injuries are expensive in Japan; make sure skiing is covered.']],
+ ['prep-sizes',null,['收集 12 人的身高、體重、鞋號','12名の身長・体重・靴サイズ','Collect height, weight, shoe size for 12'],['預約雪具要用。','','Needed for the rental booking.']],
+ ['prep-rental',null,['預約雪具（2/17 13:15 到店）','レンタル予約','Book ski rental (arrive 2/17 13:15)'],['跟店家說 12 人、到店時間。','','Tell them 12 people and arrival time.']],
+ ['prep-keisei','2026-11-21',['京成改點後再確認 Skyliner 時刻','京成ダイヤ改正後に再確認','Recheck Skyliner after Keisei\'s timetable change'],['11/21 京成改點，7:23 這班要再對一次。','','Keisei changes timetables on Nov 21.']],
+ ['prep-alpico','2026-12-10',['Alpico 冬季時刻表公布後確認巴士班次','アルピコ冬ダイヤ確認','Check Alpico winter timetable'],['決定 2/17 去程、2/20 回程要搭哪班，能不能預約。','','Pick the buses and see if they\'re bookable.']],
+ ['prep-yen',null,['換日幣現金','円の現金','Get yen cash'],['巴士、溫泉、小店常只收現金；每人建議準備一些。','','Buses, onsen and small shops often take cash only.']],
+ ['prep-suica',null,['手機加 Suica 或到日本買實體卡','Suica準備','Set up Suica'],['iPhone 可以在「錢包」加 Suica；多數台灣 Android 手機不支援，到日本再買實體卡。','','iPhone: add Suica in Wallet. Most Taiwan Android phones can\'t; buy a card in Japan.']],
+ ['prep-sim',null,['網路：eSIM 或 Wi-Fi 機','eSIM・Wi-Fi','Data: eSIM or pocket Wi-Fi'],['看網站、地圖、翻譯都要網路。','','You need data for this site, maps and translation.']],
+ ['prep-vjw','2027-02-10',['填 Visit Japan Web（入境、海關 QR code）','Visit Japan Web 登録','Fill in Visit Japan Web (immigration/customs QR)'],['出發前一週左右填好，落地掃 QR 比較快。','','Do it about a week before; scanning the QR on arrival is faster.']],
+ ['prep-gear',null,['保暖裝備','防寒具','Warm gear'],['雪衣雪褲（租或自備）、手套、毛帽、頸套、發熱衣、雪鏡、防曬。','','Ski jacket/pants (rent or bring), gloves, beanie, neck gaiter, base layers, goggles, sunscreen.']],
+ ['prep-weather','2027-02-14',['出發前看白馬天氣和雪況','天気・積雪確認','Check Hakuba weather and snow'],['大雪可能影響巴士和新幹線。','','Heavy snow can affect buses and trains.']]
+];
+function prepState(it){
+ if(taskDone(it[0]))return {k:'done',txt:U('doneP')};
+ if(!it[1])return {k:'open',txt:U('anyTime')};
+ const d=daysBetween(nowTs(),it[1]);
+ if(d>0)return {k:d<=14?'warn':'wait',txt:U('dueIn',d)};
+ if(d===0)return {k:'now',txt:U('dueToday')};
+ return {k:'now',txt:U('overdue')};
+}
+function todoHub(){
+ const lock=SYNC.db&&!SYNC.canTasks;
+ const prepDone=PREP.filter(x=>taskDone(x[0])).length;
+ const voteKeys=Object.keys(OPTS);
+ let h=`<section id="todo"><div class="sh"><span class="tag" style="--tagc:#C97A12">${U('hubT')}</span><span class="sub">${U('hubSub')}</span></div>
+ <div class="hub">
+ <details class="card" open><summary><b>📝 ${U('missT')}</b> <span class="pill warn">${MISSING.length}</span></summary><p class="small muted" style="margin:6px 0 10px">${U('missSub')}</p>
+ <ul class="hublist">${MISSING.map(m=>`<li><span>${m[0]}</span><div><b>${esc(L(m[1]))}</b><div class="small muted">${esc(L(m[2]))}</div></div></li>`).join('')}</ul></details>
+ <details class="card" open><summary><b>🧳 ${U('prepT')}</b> <span class="pill open num">${prepDone}/${PREP.length}</span></summary><p class="small muted" style="margin:6px 0 10px">${U('prepSub')}</p>
+ <div class="tasks">${[...PREP].sort((a,b)=>(a[1]||'9').localeCompare(b[1]||'9')).map(x=>{const st=prepState(x);return `<div class="task${st.k==='done'?' done':''}"><input class="cb" type="checkbox" data-task="${x[0]}" ${st.k==='done'?'checked':''} ${lock?'disabled':''} aria-label="${esc(L(x[2]))}"><div class="task-body"><div class="task-top"><h3 style="font-size:16px">${esc(L(x[2]))}</h3><span class="pill ${st.k}">${x[1]?x[1].slice(5).replace('-','/')+' · ':''}${esc(st.txt)}</span></div><div class="small muted">${esc(L(x[3])||x[3][0])}</div></div></div>`}).join('')}</div></details>
+ <details class="card" open><summary><b>🗳️ ${U('voteT')}</b> <span class="pill warn">${voteKeys.length}</span></summary><p class="small muted" style="margin:6px 0 10px">${U('voteSub')}</p>
+ <ul class="hublist">${voteKeys.map(k=>{const {t,mine}=voteTally(k);const n=Object.values(t).reduce((a,v)=>a+v.length,0);let lead=null,max=0;Object.entries(t).forEach(([i,v])=>{if(v.length>max){max=v.length;lead=+i}});const day=Object.entries(OLINK).filter(([kk,v])=>v.includes(k)).map(([kk])=>kk.split('-')[0]);const dates=[...new Set(day)].map(n=>DAYS[n-1].date.slice(5).replace('-','/')).join('、');
+  return `<li><span>🔀</span><div style="min-width:0;flex:1"><b>${esc(L(OPTS[k].t))}</b><div class="small muted">${dates}${SYNC.db&&SYNC.crewOK?` · ${U('votes',n)}${lead!=null?` · ${U('leading')}：${esc(L(OPTS[k].o[lead][0]))}`:''}`:''}${mine!=null?` · ✓ ${U('myPick')}：${esc(L(OPTS[k].o[mine][0]))}`:''}</div></div><button class="btn sm" type="button" data-opts="${k}">${mine!=null?U('change'):U('goVote')}</button></li>`}).join('')}</ul></details>
+ </div></section>`;
+ return h;
+}
+
+const DAYTIP={
+ 1:['紅眼班機落地後先在機場吃早餐、上廁所、買 Suica，7:23 前有一個多小時。京成上野轉 JR 要拖行李走地面 5–10 分鐘，2 月東京早上很冷，外套放隨身。新幹線上可以補眠，但長野站 10:44 到站前 5 分鐘要叫醒大家。白馬比東京冷很多，下巴士前穿好手套毛帽。泡湯禮儀：先在洗身區洗乾淨再進池，毛巾不放進池子，有刺青的人先問能不能入浴。',
+     '早朝着なので空港で朝食とSuica購入。上野の乗換は屋外を歩くので上着を手元に。長野着前に全員を起こす。白馬は東京よりずっと寒い。温泉は体を洗ってから、タオルは湯船に入れない。',
+     'After the red-eye, use the hour before 7:23 for breakfast, restrooms and Suica. The Ueno transfer is partly outdoors, so keep coats handy. Wake everyone 5 minutes before Nagano. Hakuba is far colder than Tokyo. Onsen etiquette: wash first, keep towels out of the bath, ask about tattoos.'],
+ 2:['雪場安全第一：保持間距、停下來時靠雪道邊、不要停在坡道轉彎後看不到的地方。15:30 後雪面結冰變滑，累了就收工。高海拔紫外線強，陰天也要擦防曬和護唇膏。每個人手機存好住宿地址和集合點，雪場收訊可能不好，先約好幾點在哪裡會合。回住宿後雪鞋、手套放乾燥室，隔天才會乾。',
+     '間隔を空け、止まるときはコース脇へ。15:30以降は凍結。曇りでも日焼け止め。集合場所と時間を決めておく。ブーツと手袋は乾燥室へ。',
+     'Safety first: keep your distance, stop at the side of the run. It ices up after 15:30. Sunscreen even on cloudy days. Agree a meeting place and time, since signal can be weak. Boots and gloves go in the drying room.'],
+ 3:['第二天腿會痠，早上多拉筋，不要一開始就挑戰難的雪道。還雪具前清點：板、鞋、雪杖、安全帽，口袋裡的東西拿出來。今晚就把行李打包好，明天 8:30 退房、8:50 到巴士總站排隊。',
+     '2日目は筋肉痛に注意。返却前に装備と私物を確認。今夜中に荷造り、明朝8:30チェックアウト。',
+     'Legs will be sore; stretch and warm up gently. Before returning rentals, count everything and empty your pockets. Pack tonight: checkout 8:30, at the bus by 8:50.'],
+ 4:['巴士非預約制先到先上，12 人提早 20 分鐘排隊。到長野站先買明天 9:17 的新幹線票。善光寺戒壇巡禮是全黑的地下回廊，右手扶牆慢慢走，怕黑的人可以在外面等。內陣和戒壇門票、小店常只收現金。週六晚上燒肉一定要先訂位，12 人可能分兩桌。',
+     'バスは早めに並ぶ。長野駅で明日の新幹線切符を購入。お戒壇めぐりは真っ暗、右手を壁に。現金を用意。土曜の焼肉は要予約。',
+     'Queue early for the walk-on bus. Buy tomorrow\'s train tickets at Nagano. The Okaidan tunnel is pitch-dark: keep your right hand on the wall. Carry cash. Saturday yakiniku needs a booking.'],
+ 5:['新幹線在「上野」下車，不要坐到東京。週日淺草和晴空塔人非常多，包包背前面、手機收好，12 人約好走散時在哪裡集合（例如雷門大燈籠下）。晴空塔票的 QR 先存在手機。日本街上垃圾桶很少，垃圾帶回飯店。電車上講電話會被側目，講話小聲一點。',
+     '上野で下車。日曜は大混雑、スリに注意、はぐれたら雷門に集合。チケットQRを保存。ゴミは持ち帰り。車内では静かに。',
+     'Get off at Ueno, not Tokyo. Sunday crowds: bags in front, agree a meeting point (Kaminarimon lantern). Save the Skytree QR. Few public bins; carry rubbish. Keep voices down on trains.'],
+ 6:['不要搭「Access 特急」，它不停京成成田。前一天先確認航班在第幾航廈。成田山表參道的鰻魚店到了先抽號碼牌。免稅購物要帶護照；液體伴手禮（清酒、醬油）放託運行李。起飛前 2.5–3 小時到機場。',
+     'アクセス特急はNG。ターミナルを前日に確認。うなぎ屋は整理券を先に。免税はパスポート必須、液体は預け荷物へ。',
+     'Not the Access Express. Check your terminal the night before. Grab an eel-shop queue ticket first. Bring your passport for tax-free shopping; put liquid souvenirs in checked bags. Be at the airport 2.5–3 h before departure.']
+};
+const SOURCES=[
+ ['京成 Skyliner 時刻表','https://www.keisei.co.jp/keisei/tetudou/skyliner/jp/traffic/skyliner_timetable_1121.php'],
+ ['JR 東日本 上野站 北陸新幹線','https://timetables.jreast.co.jp/2611/timetable/tt0204/0204050.html'],
+ ['JR 東日本 長野站 北陸新幹線','https://timetables.jreast.co.jp/2611/timetable/tt1105/1105011.html'],
+ ['Alpico 長野–白馬線','https://www.alpico.co.jp/traffic/express/nagano_hakuba/'],
+ ['Alpico 長野站乘車處','https://www.alpico.co.jp/traffic/station/nagano_sta/'],
+ ['成田機場 鐵路交通','https://www.narita-airport.jp/ja/access/train/'],
+ ['京成成田站','https://www.keisei.co.jp/keisei/tetudou/accessj/keisei-narita.php'],
+ ['淺草豪景酒店 交通','https://www.viewhotels.co.jp/asakusa/access/'],
+ ['晴空塔 官方售票','https://global-official-ticket.tokyo-skytree.jp/zt/home'],
+ ['北陸新幹線票價（tabiris）','https://shinkansen.tabiris.com/fare07.html'],
+ ['上野站轉乘說明（wadattsu261）','https://wadattsu261.com/content/keiseiueno-keiseiline-shinkansen-transfer-information/'],
+ ['去年冬季巴士時刻（Snow Monkey Resorts）','https://www.snowmonkeyresorts.com/access/alpico-hakuba-express-bus-timetable/'],
+ ['東京／成田到白馬交通（SkiJapan）','https://www.skijapan.com/?p=31227']
+];
+function footerHTML(){
+ return `<div class="bye">${U('bye')}</div>
+ <p class="foot srcs">${U('srcLbl')}${SOURCES.map(x=>`<a href="${x[1]}" target="_blank" rel="noopener">${esc(x[0])}</a>`).join('、')}。${U('srcNote')}</p>`;
+}
+
+/* ---------- days ---------- */
+const DAYS=[
+{n:1,date:'2027-02-17',wd:['三','水','Wed'],c:'#2B7BB9',emo:'🚄',scene:'mount',props:['🚄','🏔️','♨️'],
+ title:['上山囉','いざ白馬','Up the mountain'],tab:['抵達・白馬','到着・白馬','Arrive · Hakuba'],
+ chip:['成田 → 白馬','成田 → 白馬','Narita → Hakuba'],
+ lead:['凌晨落地成田，一路搭 Skyliner、新幹線、巴士上白馬。寄放行李、領雪具，傍晚泡湯把紅眼班機的累洗掉。','早朝に成田着。スカイライナー、新幹線、バスで白馬へ。荷物を預け、レンタルを受け取り、夕方は温泉。','Land at Narita before dawn, then Skyliner, Shinkansen and bus up to Hakuba. Drop bags, pick up rentals, soak in an onsen.'],
+ trans:['成田 Skyliner → 京成上野，步行 5 分鐘到 JR 上野 → 北陸新幹線到長野 → 東口 26 號站牌 Alpico 巴士到白馬八方。之後村內步行或接駁車。','成田→スカイライナー→京成上野、徒歩5分でJR上野→北陸新幹線で長野→東口26番からアルピコバスで白馬八方。','Skyliner to Keisei Ueno, 5-min walk to JR Ueno, Shinkansen to Nagano, Alpico bus from East Exit stop 26 to Hakuba Happo. Walk or shuttle in the village.'],
+ route:['成田国際空港','京成上野駅','JR長野駅','白馬八方バスターミナル','Snow Peak LAND STATION HAKUBA','八方の湯'],
+ items:[
+ ['05:30','07:15','✈️',['抵達成田、入境、領行李、買 Suica 和早餐','成田到着・入国・荷物・Suica・朝食','Land, immigration, bags, Suica, breakfast'],['步行','徒歩','Walk'],'—',null,'成田国際空港',['12 人入境加領行李抓 1 小時。7:23 是第一班 Skyliner，中間時間買 Suica、吃早餐、上廁所。','12名の入国と荷物で約1時間。7:23の始発まで朝食とSuica購入。','Allow an hour for 12 people. Use the wait for Suica, breakfast and restrooms before the 7:23 first Skyliner.'],{ph:'toilet'}],
+ ['07:23','08:29','🚃',['Skyliner 2 號 成田 → 京成上野','スカイライナー2号 成田 → 京成上野','Skyliner No.2: Narita → Keisei Ueno'],['第 1 航廈 7:23／第 2 航廈 7:27 發，約 65 分','T1 7:23・T2 7:27発、約65分','T1 7:23 / T2 7:27, ~65 min'],['KKday 憑證換票（子菱 2 張＋10 張）','KKdayバウチャー引換','KKday vouchers (2 + 10)'],[2580,2580],'東京都台東区上野公園1-60 京成上野駅',['平日最早一班。趕不上就搭 8:12（9:16 到），改搭備案新幹線。下車走 5–10 分鐘到 JR 上野。','平日の始発。乗り遅れたら8:12発。','First weekday train. Miss it: 8:12 (arr. 9:16) and the backup Shinkansen.'],{tr:1,book:'sky',ph:'skyliner'}],
+ ['08:35','09:15','🎫',['JR 上野站現場買新幹線票','JR上野駅で新幹線の切符購入','Buy Shinkansen tickets at JR Ueno'],['京成上野走地下道 5–10 分到 JR 上野','京成上野から徒歩5–10分','5–10 min walk to JR Ueno'],['售票機／綠色窗口（信用卡、現金）','券売機・みどりの窓口','Machine or ticket desk'],null,'JR上野駅 みどりの窓口',['出示首頁的「JR 窗口購票卡」，買 9:26 Kagayaki 507 指定席 12 張；買不到改 9:38 Hakutaka 557 自由席。','窓口用メモを見せて購入。','Show the JR ticket card. If 12 seats on Kagayaki 507 aren\'t available, take Hakutaka 557 unreserved.'],{book:'jr1',ph:'jr1'}],
+ ['09:26','10:44','🚅',['Kagayaki 507 上野 → 長野','かがやき507号 上野 → 長野','Kagayaki 507: Ueno → Nagano'],['北陸新幹線，1 小時 18 分','北陸新幹線 1時間18分','Hokuriku Shinkansen, 1h18'],['已在上野買好','上野で購入済み','Bought at Ueno'],[8340,8340],'長野県長野市大字栗田 JR長野駅',['備案：Hakutaka 557 9:38 → 11:03，一樣接得上 11:20 巴士。','予備：はくたか557号 9:38→11:03。','Backup: Hakutaka 557, 9:38 → 11:03; still makes the 11:20 bus.'],{tr:1,book:'jr1',ph:'jrAlt'}],
+ ['11:20','12:30','🚌',['Alpico 巴士 長野 → 白馬八方','アルピコバス 長野 → 白馬八方','Alpico bus: Nagano → Hakuba Happo'],['長野站東口上車，約 70 分','長野駅東口から約70分','From Nagano East Exit, ~70 min'],['JR 長野站 2 樓售票機（現金）／上車刷卡','JR長野駅2階の券売機・車内カード','Machine at JR Nagano 2F (cash) or tap card on board'],[3500,3500],'長野県北安曇郡白馬村北城八方5734-1 白馬八方バスターミナル',['依去年冬季時刻，冬季新時刻表公布後再確認。備案 12:30 → 13:40。在長野站買便當上車吃。','昨冬の時刻。新ダイヤ発表後に要確認。予備12:30発。','Based on last winter\'s timetable; recheck when the new one is out. Backup 12:30 → 13:40. Grab ekiben for the ride.'],{tr:1,book:'bus1',ph:'bus'}],
+ ['12:40','13:10','🏨',['白馬住宿 Check-in／寄放行李','白馬の宿にチェックイン・荷物預け','Hakuba lodging: check in / drop bags'],['步行或請住宿接駁','徒歩か宿の送迎','Walk or lodge shuttle'],['—','—','—'],null,'',['先寄放大行李、換裝。白馬住宿名稱待確認。','荷物を預けて着替え。宿名は未定。','Drop bags and change. Lodging name TBC.'],{ph:'luggage'}],
+ ['13:10','14:45','🎿',['領租借雪具（午餐已在巴士上吃）','レンタル受取','Pick up rentals'],['步行或雪具店免費接駁','徒歩・レンタル店の送迎','Walk or rental-shop shuttle'],['信用卡／現金，依個人方案','カード・現金（プランによる）','Card or cash, by plan'],null,'白馬村 Spicy Rental',['12 人試穿要時間，預約時跟店家說到店時間 13:15。確認雪鞋合腳、雪板長度、安全帽。','12名なので来店時間を伝えておく。','Tell the shop you\'ll arrive ~13:15 with 12 people. Check boot fit, board length, helmet.'],{ph:'boots'}],
+ ['15:00','16:30','☕',['Snow Peak LAND STATION HAKUBA','スノーピーク ランドステーション白馬','Snow Peak LAND STATION HAKUBA'],['村內接駁、計程車或步行','村内シャトル・タクシー・徒歩','Shuttle, taxi or walk'],['參觀免費，消費另計','入場無料','Free entry'],null,'長野県北安曇郡白馬村北城5454',['隈研吾設計，附設星巴克。紅眼班機很累的話這站可以跳過，直接泡湯。','疲れていたら省略可。','Kengo Kuma building with a Starbucks. Skip it if everyone is wiped out.'],{}],
+ ['17:00','18:30','♨️',['泡湯：八方之湯／十郎之湯','温泉：八方の湯・十郎の湯','Onsen: Happo-no-yu / Juro-no-yu'],['步行或村內巡迴巴士','徒歩・村内巡回バス','Walk or village bus'],['現金／售票機','現金・券売機','Cash or machine'],[800,1000],'長野県北安曇郡白馬村大字北城5701-2 八方の湯',['自備毛巾或現場買。','タオル持参か現地購入。','Bring a towel or buy one there.'],{ph:'towel'}],
+ ['19:00','20:30','🍢',['晚餐：白馬居酒屋／西餐','夕食：白馬の居酒屋・洋食','Dinner: izakaya or western'],['步行到 Echoland 或八方街區','エコーランド・八方エリアへ徒歩','Walk to Echoland or Happo'],['信用卡／現金','カード・現金','Card or cash'],[2500,4000],'白馬村 エコーランド',['雪季餐廳人多，12 人請住宿幫忙訂位。早點睡。','12名は宿に予約を頼むと安心。早めに休む。','Ask the lodge to book for 12. Early night.'],{ph:'table'}]
+ ],
+ pack:[['🛂',['護照','パスポート','Passport'],1],['🎫',['Skyliner 憑證（子菱的 2 張＋其他 10 張）','スカイライナー券（2枚＋10枚）','Skyliner tickets (2 + 10)'],1],['💳',['Suica／PASMO（手機錢包）','Suica・PASMO','Suica / PASMO'],1],['💴',['日幣現金（巴士、溫泉）','現金（バス・温泉）','Yen cash (bus, onsen)'],1],['📱',['巴士預約畫面','バス予約画面','Bus booking screen'],1],['🎿',['雪具租借預約截圖','レンタル予約画面','Rental booking'],1],['🏨',['住宿預約資料','宿の予約情報','Lodging booking'],0],['🔋',['行動電源','モバイルバッテリー','Power bank'],0],['🧣',['毛巾（泡湯）','タオル','Towel'],0],['🧤',['保暖外套手套','防寒着・手袋','Warm coat & gloves'],0]],
+ bingo:[['☕',['喝到超商熱飲','コンビニのホット','Hot drink from a konbini']],['🚅',['搭上新幹線','新幹線に乗る','Ride the Shinkansen']],['🍱',['吃到車站便當','駅弁を食べる','Eat an ekiben']],['🏔️',['巴士上看到雪山','バスから雪山','Snow peaks from the bus']],['❄️',['摸到第一把雪','初めての雪','First handful of snow']],['👢',['雪鞋一次就合腳','ブーツ一発で合う','Boots fit first try']],['☕',['Snow Peak 喝咖啡','スノーピークでコーヒー','Coffee at Snow Peak']],['♨️',['泡到溫泉','温泉に入る','Onsen soak']],['🍢',['吃到烤串','焼き鳥','Yakitori']],['📸',['12 人大合照','12名で集合写真','Group photo of 12']],['💳',['Suica 付款成功','Suicaで支払い','Pay with Suica']],['😴',['10 點前睡覺','22時前に寝る','Asleep before 10']]],
+ eats:[['Echoland 周邊居酒屋','エコーランドの居酒屋','Echoland izakayas',['白馬最熱鬧的餐廳區，12 人建議請住宿先訂。','白馬で一番にぎやかなエリア。','Hakuba\'s busiest dining area; ask the lodge to book.'],'白馬村 エコーランド'],['八方街區','八方エリア','Happo area',['八方巴士總站附近，泡完八方之湯順路。','八方の湯の帰りに便利。','Near the bus terminal, handy after the onsen.'],'白馬村 八方 レストラン']]
+},
+{n:2,date:'2027-02-18',wd:['四','木','Thu'],c:'#178E9A',emo:'⛷️',scene:'slope',props:['⛷️','🚡','🍛'],
+ title:['開滑！','初滑り！','First tracks'],tab:['白馬全日滑雪','白馬スキー1日目','Ski day 1'],
+ chip:['八方尾根／五龍／47／岩岳','八方尾根・五竜・47・岩岳','Happo / Goryu / 47 / Iwatake'],
+ lead:['開滑第一天，先熟悉雪況、纜車和動線。上午滑、雪場吃咖哩，下午 3 點半雪面開始結冰就準備收工。','初日は雪と動線に慣れる日。午前滑ってカレーを食べ、15:30以降は凍るので早めに上がる。','Day one on snow: learn the lifts and runs. Curry on the mountain, wrap up after 15:30 when it ices over.'],
+ trans:['住宿附近站牌搭白馬免費雪場接駁巴士，旺季班次密集，提前 10 分鐘到站。雪場內靠纜車、吊椅。','宿の近くから無料シャトルバス。10分前に乗り場へ。','Free Hakuba ski shuttle from near the lodge; be at the stop 10 min early. Lifts on the mountain.'],
+ route:['白馬八方バスターミナル','白馬八方尾根スキー場'],
+ items:[
+ ['07:30','08:30','🍳',['早餐、暖身、著裝','朝食・ストレッチ・準備','Breakfast, stretch, gear up'],['住宿處','宿','At the lodge'],['住宿附餐或超商','宿の朝食かコンビニ','Lodge or konbini'],null,'',['檢查雪票、雪鏡、手套、防摔褲。','リフト券・ゴーグル・手袋・プロテクター確認。','Check lift pass, goggles, gloves, padding.'],{}],
+ ['08:30','09:00','🚌',['搭接駁巴士去雪場','シャトルバスでゲレンデへ','Shuttle to the slopes'],['白馬免費雪場接駁巴士','白馬無料シャトルバス','Free Hakuba ski shuttle'],['免費','無料','Free'],null,'白馬八方尾根スキー場',['旺季提前 10 分鐘到站，避免客滿等下一班。','10分前に乗り場へ。','Arrive 10 min early or wait for the next one.'],{tr:1}],
+ ['09:00','12:30','⛷️',['上午滑雪','午前スキー','Morning skiing'],['纜車／吊椅','ゴンドラ・リフト','Gondola & lifts'],['一日券，線上先買或現場刷卡','1日券（ネットか現地）','Day pass online or on site'],[7000,8500],'白馬八方尾根スキー場',['保持安全間距，初學者戴安全帽，看清楚綠、紅、黑線標示。','間隔を空け、初心者はヘルメット必須。コース色を確認。','Keep spacing, beginners wear helmets, read the run colours.'],{must:1,ph:'lift'}],
+ ['12:30','13:30','🍛',['雪場午餐（Rest House）','ゲレンデ食堂でランチ','Lunch at the rest house'],['步行','徒歩','Walk'],['信用卡／IC卡／現金','カード・IC・現金','Card, IC or cash'],[1500,2000],'',['避開 12:00 尖峰；多喝水、補熱量。','12時を避けると空いている。水分補給。','Skip the 12:00 rush; drink water.'],{ph:'card'}],
+ ['13:30','16:00','🏂',['下午滑雪','午後スキー','Afternoon skiing'],['纜車','リフト','Lifts'],['含在雪票內','リフト券に含む','Included'],null,'白馬八方尾根スキー場',['15:30 後氣溫降、雪面結冰較滑，留體力。','15:30以降はアイスバーンに注意。','Ice forms after 15:30; save some energy.'],{ph:'beginner'}],
+ ['16:00','17:00','🧥',['回住宿、晾裝備','宿に戻り装備を乾かす','Back to lodge, dry gear'],['返程接駁巴士','帰りのシャトル','Shuttle back'],['免費','無料','Free'],null,'',['裝備放乾燥室，雪鞋內保持通風。','乾燥室へ。ブーツは中まで乾かす。','Gear into the drying room; air out boots.'],{tr:1,ph:'dry'}],
+ ['18:00','20:00','🍕',['晚餐：白馬料理／披薩居酒屋','夕食：白馬グルメ・ピザ居酒屋','Dinner: local food or pizza'],['步行','徒歩','Walk'],['信用卡／現金','カード・現金','Card or cash'],[2000,3500],'白馬村 レストラン',['補蛋白質和碳水，放鬆肌肉。','タンパク質と炭水化物で回復。','Refuel with protein and carbs.'],{ph:'table'}]
+ ],
+ pack:[['🎫',['雪票 Lift Pass','リフト券','Lift pass'],1],['🥽',['雪鏡','ゴーグル','Goggles'],1],['🧤',['防水手套','防水手袋','Waterproof gloves'],1],['⛑️',['安全帽','ヘルメット','Helmet'],1],['🩳',['防摔褲／護具','プロテクター','Impact shorts'],1],['🧣',['頸套、毛帽','ネックウォーマー・帽子','Neck gaiter & beanie'],0],['🧴',['防曬乳、護唇膏','日焼け止め・リップ','Sunscreen & lip balm'],0],['🔥',['暖暖包','カイロ','Hand warmers'],0],['💧',['水','水','Water'],0],['💴',['現金／Suica','現金・Suica','Cash / Suica'],0]],
+ bingo:[['🚡',['第一次坐上吊椅','初リフト','First chairlift']],['🟢',['綠線一路不跌倒','初心者コース転ばず','Green run, no falls']],['🍛',['吃到雪場咖哩','ゲレンデカレー','Mountain curry']],['🤸',['跌倒自己站起來','転んでも自力で起きる','Get up on your own']],['🥽',['戴雪鏡自拍','ゴーグル自撮り','Goggle selfie']],['🏔️',['看到北阿爾卑斯全景','北アルプスの絶景','North Alps panorama']],['☃️',['堆一個小雪人','雪だるま','Build a snowman']],['🍫',['喝到熱可可','ホットココア','Hot cocoa']],['🚌',['搭上接駁巴士','シャトルに乗る','Catch the shuttle']],['🧦',['裝備放進乾燥室','乾燥室を使う','Use the drying room']],['📹',['錄一段滑行影片','滑りを動画に','Film a run']],['🍕',['晚餐吃披薩','夕食はピザ','Pizza dinner']]],
+ eats:[['雪場 Rest House 咖哩','ゲレンデ食堂のカレー','Rest-house curry',['山上餐廳必吃咖哩，避開 12:00。','12時を外すと空いている。','A ski-day classic; avoid noon.'],'白馬八方尾根スキー場 レストラン'],['白馬披薩居酒屋','白馬のピザ・居酒屋','Hakuba pizza & izakaya',['滑完雪補碳水。','滑った後の炭水化物補給。','Carbs after a ski day.'],'白馬村 ピザ']]
+},
+{n:3,date:'2027-02-19',wd:['五','金','Fri'],c:'#6A55C4',emo:'🏂',scene:'slope',props:['🏂','❄️','♨️'],
+ title:['粉雪衝刺','パウダー最終日','Last powder run'],tab:['白馬滑雪 Day 2','白馬スキー2日目','Ski day 2'],
+ chip:['換一個雪場','別のゲレンデへ','Try another resort'],
+ lead:['第二天換個雪場，五龍或 47 地形不一樣。下午 3 點半收工還雪具，泡湯後打包，明天要退房下山。','2日目は五竜か47へ。15:30にレンタル返却、温泉の後は荷造り。','Switch to Goryu or Hakuba 47. Return rentals at 15:30, soak, then pack for checkout.'],
+ trans:['一樣搭免費接駁巴士，往五龍／47 的路線要先看好站牌時刻。下午搭接駁或步行回雪具店。','無料シャトルで五竜・47へ。時刻表を事前確認。','Free shuttle again; check the Goryu / 47 times. Shuttle or walk back to the rental shop.'],
+ route:['白馬八方バスターミナル','白馬五竜スキー場','Spicy Rental Hakuba'],
+ items:[
+ ['07:30','08:30','🍳',['早餐、整理裝備','朝食・準備','Breakfast, gear up'],['住宿處','宿','At the lodge'],['自理','各自','On your own'],null,'',['第二天肌肉會痠，下肢和核心要拉開。','2日目は筋肉痛に注意。しっかりストレッチ。','Expect sore legs; stretch well.'],{}],
+ ['08:30','09:00','🚌',['接駁巴士去雪場','シャトルでゲレンデへ','Shuttle to the slopes'],['雪場接駁巴士','シャトルバス','Ski shuttle'],['免費','無料','Free'],null,'白馬五竜スキー場',['可選五龍或 47，體驗不同地形。','五竜か47で違う地形を。','Goryu or 47 for different terrain.'],{tr:1}],
+ ['09:00','12:30','🏂',['上午滑雪','午前スキー','Morning skiing'],['纜車','ゴンドラ','Gondola'],['一日券','1日券','Day pass'],[7000,8500],'白馬五竜スキー場',['帶擦鏡布，下雪時雪鏡容易起霧。','くもり止めの布を持参。','Bring a lens cloth for fogged goggles.'],{must:1,ph:'lift'}],
+ ['12:30','13:30','🍜',['雪場景觀餐廳午餐','景色のいいレストラン','Lunch with a view'],['步行','徒歩','Walk'],['信用卡／IC卡／現金','カード・IC・現金','Card, IC or cash'],[1500,2200],'',['午休時暖身，看看體力。','休憩しつつ体力チェック。','Warm up and check how your legs feel.'],{ph:'rec'}],
+ ['13:30','15:30','⛷️',['下午最後衝刺','午後ラストラン','Last runs'],['雪道','ゲレンデ','On the runs'],['含在雪票內','リフト券に含む','Included'],null,'白馬五竜スキー場',['最後幾趟注意減速，不要逞強。','最後こそ慎重に。','Easy on the last runs.'],{}],
+ ['15:30','17:00','📦',['歸還租借雪具','レンタル返却','Return rentals'],['接駁車或步行','シャトルか徒歩','Shuttle or walk'],['—','—','—'],null,'白馬村 Spicy Rental',['清點安全帽、雪板、雪杖、雪鞋，別把私人物品留在裡面。','ヘルメット、板、ストック、ブーツを数えて返却。私物を忘れずに。','Count helmet, board/skis, poles, boots. Don\'t leave your own things.'],{must:1}],
+ ['17:30','19:00','♨️',['泡湯或咖啡館休息','温泉かカフェ','Onsen or café'],['步行','徒歩','Walk'],['現金／IC卡','現金・IC','Cash or IC'],[800,1500],'白馬村 温泉',['放鬆連滑兩天的腿。','2日間の疲れを癒やす。','Soak those legs.'],{ph:'towel'}],
+ ['19:00','21:00','🧳',['晚餐＋打包','夕食＋荷造り','Dinner + pack'],['步行','徒歩','Walk'],['信用卡／現金','カード・現金','Card or cash'],[2500,4000],'',['明天 9 點退房搭巴士下山，行李今晚打包好。','明朝9時チェックアウト。今夜中に荷造り。','Checkout at 9 tomorrow; pack tonight.'],{}]
+ ],
+ pack:[['🎫',['雪票','リフト券','Lift pass'],1],['🥽',['雪鏡＋擦鏡布','ゴーグル＋くもり止め','Goggles + lens cloth'],1],['🧤',['手套','手袋','Gloves'],1],['🧾',['雪具租借單據（歸還用）','レンタル控え','Rental receipt'],1],['🩳',['防摔褲','プロテクター','Impact shorts'],0],['🔥',['暖暖包','カイロ','Hand warmers'],0],['🧴',['防曬、護唇膏','日焼け止め','Sunscreen'],0],['💴',['現金','現金','Cash'],0]],
+ bingo:[['🆕',['換一個新雪場','新しいゲレンデ','New resort']],['🔵',['挑戰一條紅線','中級コースに挑戦','Try an intermediate run']],['🥽',['雪鏡全程沒起霧','くもりなし','No foggy goggles']],['🌨️',['在下雪中滑雪','雪の中を滑る','Ski in falling snow']],['🔟',['坐滿 10 趟纜車','リフト10本','10 lift rides']],['📹',['最後一趟錄影','ラストラン動画','Film the last run']],['⏰',['準時還雪具','時間通り返却','Return rentals on time']],['🥛',['泡完湯喝牛奶','湯上がりの牛乳','Milk after the bath']],['🧳',['行李打包完成','荷造り完了','Fully packed']],['🖐️',['跟教練／陌生人擊掌','誰かとハイタッチ','High-five a stranger']],['📮',['寄一張明信片','ハガキを出す','Mail a postcard']],['🌙',['看到雪地夜景','雪の夜景','Snowy night view']]],
+ eats:[['雪場景觀餐廳','ゲレンデの展望レストラン','Slope-side restaurant',['看著山景吃午餐。','山を眺めながらランチ。','Lunch with mountain views.'],'白馬五竜スキー場 レストラン']]
+},
+{n:4,date:'2027-02-20',wd:['六','土','Sat'],c:'#C8432C',emo:'🏯',scene:'temple',props:['🏯','🌶️','🥩'],
+ title:['善光寺<br>和牛夜','善光寺と<br>信州牛','Zenkoji<br>& wagyu'],tab:['白馬 → 長野','白馬 → 長野','Hakuba → Nagano'],
+ chip:['善光寺・七味・燒肉','善光寺・七味・焼肉','Temple · shichimi · BBQ'],
+ lead:['退房下山到長野，東橫 INN 寄放行李。下午逛善光寺參道、調七味粉、看美術館，晚上吃蘋果餵大的信州和牛。','長野へ移動し東横INNに荷物を預ける。善光寺、七味、美術館、夜は信州牛の焼肉。','Down to Nagano, bags at Toyoko Inn, then Zenkoji, custom shichimi, the art museum and Shinshu wagyu for dinner.'],
+ trans:['白馬八方 Alpico 巴士 → 長野站東口。善光寺口搭善光寺線巴士到「善光寺大門」（約 10 分一班，¥190，可刷 IC 卡），回程同路線。晚餐從東口走 8–10 分鐘到善光寺口商圈。','アルピコバスで長野駅東口へ。善光寺口から善光寺大門行きバス（約10分毎、¥190）。','Alpico bus to Nagano East Exit. From Zenkoji Exit, bus to "Zenkoji Daimon" (every ~10 min, ¥190, IC OK). Dinner is an 8–10 min walk.'],
+ route:['白馬八方バスターミナル','JR長野駅','東横INN長野駅東口','善光寺','八幡屋礒五郎 本店','長野県立美術館','信州牛焼肉 深山'],
+ items:[
+ ['08:30','09:00','🧳',['白馬退房，到八方巴士總站排隊','チェックアウト、八方バスターミナルへ','Check out, queue at Happo terminal'],['住宿接駁或步行','送迎か徒歩','Lodge shuttle or walk'],['免費','無料','Free'],null,'長野県北安曇郡白馬村北城八方5734-1 白馬八方バスターミナル',['8:50 前到，非預約制班次先到先上。','8:50までに到着。','Be there by 8:50; walk-on buses fill in order.'],{}],
+ ['09:10','10:20','🚌',['Alpico 巴士 白馬八方 → 長野站東口','アルピコバス 白馬八方 → 長野駅東口','Alpico bus: Hakuba Happo → Nagano'],['Alpico 特急巴士，約 70 分','約70分','~70 min'],['上車刷卡或現金','車内でカード・現金','Card or cash on board'],[3500,3500],'長野駅東口 バス乗り場',['依去年冬季時刻；備案 10:10 發。','昨冬の時刻。予備10:10発。','Last winter\'s times; backup 10:10.'],{tr:1,book:'bus2',ph:'busRes'}],
+ ['10:30','11:30','🏨',['買明天新幹線票＋東橫 INN 寄放行李','明日の新幹線切符購入＋東横INNに荷物預け','Buy tomorrow\'s train tickets + drop bags'],['長野站綠色窗口 → 東口步行 4–7 分','みどりの窓口 → 東口から徒歩4–7分','Ticket desk, then 4–7 min walk'],['信用卡／現金','カード・現金','Card or cash'],null,'長野県長野市栗田2137 東横INN長野駅東口',['先在長野站買好 2/21 9:17 Kagayaki 504 的 12 張票，再去飯店寄行李（15:00 才能入住）。','明日9:17かがやき504号の切符を先に購入。','Buy 12 tickets for tomorrow\'s 9:17 Kagayaki 504 first, then drop bags (check-in 15:00).'],{ph:'jr2',book:'jr2'}],
+ ['11:45','13:00','🥟',['善光寺參道：蕎麥麵、烤餡餅','仲見世通り：戸隠そば・おやき','Temple street: soba & oyaki'],['善光寺口搭善光寺線巴士到「善光寺大門」，10–15 分','善光寺口からバスで善光寺大門、10–15分','Bus from Zenkoji Exit to "Zenkoji Daimon", 10–15 min'],['IC 卡（Suica／PASMO）或現金','IC・現金','IC card or cash'],[190,190],'長野県長野市元善町491',['吃信州名物戶隱蕎麥麵，或參道現烤おやき。','戸隠そばか焼きたてのおやき。','Togakushi soba or fresh-grilled oyaki.'],{tr:1,ph:'table'}],
+ ['13:00','14:45','🏯',['善光寺參拜＋戒壇巡禮','善光寺参拝・お戒壇めぐり','Zenkoji + Okaidan tunnel'],['參道步行','参道を徒歩','Walk up the approach'],['本堂外免費；內陣＋戒壇巡禮約 ¥600','内陣・お戒壇 約¥600','Inner hall + tunnel ~¥600'],[600,600],'長野県長野市大字長野元善町491-イ 善光寺',['國寶本堂。戒壇巡禮在全黑地下回廊摸「極樂之鎖」結佛緣。','国宝の本堂。真っ暗な回廊で「極楽の錠前」に触れる。','National Treasure hall. In the pitch-dark tunnel, find the "key to paradise".'],{must:1,ph:'photo'}],
+ ['14:45','15:30','🌶️',['八幡屋礒五郎 本店','八幡屋礒五郎 本店','Yawataya Isogoro'],['步行 3–5 分','徒歩3–5分','3–5 min walk'],['信用卡／IC卡／現金','カード・IC・現金','Card, IC or cash'],null,'長野県長野市大門町83 八幡屋礒五郎',['日本三大七味之一，可現場調專屬辣度，還有七味冰淇淋。','日本三大七味。自分好みに調合でき、七味ソフトも。','One of Japan\'s big-three shichimi. Custom blends and shichimi ice cream.'],{ph:'shichimi'}],
+ ['15:30','17:00','🖼️',['長野縣立美術館・東山魁夷館','長野県立美術館・東山魁夷館','Nagano Prefectural Art Museum'],['善光寺後方，步行 5 分','善光寺の裏、徒歩5分','Behind Zenkoji, 5 min'],['約 ¥700（東山魁夷館另約 ¥500，可刷卡）','約¥700（東山魁夷館 別途約¥500）','~¥700 (+~¥500 Higashiyama wing)'],[700,1200],'長野県長野市箱清水1-4-4 長野県立美術館',['頂樓免費水池露台可看善光寺本堂和山景。','屋上の水辺テラス（無料）から善光寺を一望。','Free rooftop water terrace looks onto Zenkoji.'],{}],
+ ['17:15','17:40','🛏️',['回東橫 INN 入住','東横INNにチェックイン','Check in at Toyoko Inn'],['善光寺大門搭巴士回長野站，穿過車站到東口','善光寺大門からバスで長野駅、東口へ','Bus back to the station, through to East Exit'],['IC 卡／現金','IC・現金','IC or cash'],[190,190],'長野県長野市栗田2137 東横INN長野駅東口',['放戰利品、梳洗休息。','買い物を置いてひと休み。','Drop shopping, freshen up.'],{tr:1}],
+ ['18:15','20:30','🥩',['晚餐：信州和牛燒肉','夕食：信州牛の焼肉','Dinner: Shinshu wagyu BBQ'],['東口走到善光寺口站前商圈 8–10 分','東口から善光寺口側へ徒歩8–10分','8–10 min walk to the Zenkoji-exit side'],['信用卡／現金','カード・現金','Card or cash'],[5000,8000],'長野県長野市南千歳1-3-11 信州牛焼肉 深山',['蘋果飼養的信州和牛。週六晚上極熱門，12 人一定要先訂位。','りんごで育った信州牛。土曜夜は要予約。','Apple-fed Shinshu beef. Saturday night: book ahead for 12.'],{must:1,book:'yaki',ph:'resv'}],
+ ['20:30','21:30','🍎',['長野站 MIDORI 買伴手禮','長野駅MIDORIでお土産','Souvenirs at MIDORI'],['步行到車站','駅へ徒歩','Walk to the station'],['信用卡／IC卡','カード・IC','Card or IC'],null,'長野駅 MIDORI',['蘋果乾、栗子點心、信州地酒。','りんごチップス、栗菓子、地酒。','Dried apple, chestnut sweets, local sake.'],{ph:'card'}]
+ ],
+ pack:[['🎫',['巴士預約畫面','バス予約画面','Bus booking'],1],['💳',['Suica／PASMO','Suica・PASMO','Suica / PASMO'],1],['💴',['現金（戒壇巡禮 ¥600）','現金（お戒壇 ¥600）','Cash (¥600 for the tunnel)'],1],['🥩',['燒肉訂位資料','焼肉の予約情報','Dinner booking'],1],['🏨',['東橫 INN 預約','東横INN予約','Toyoko Inn booking'],0],['🛍️',['購物袋','エコバッグ','Shopping bag'],0],['🔋',['行動電源','モバイルバッテリー','Power bank'],0]],
+ bingo:[['🍜',['吃到戶隱蕎麥麵','戸隠そば','Togakushi soba']],['🥟',['吃到烤餡餅おやき','おやき','Oyaki']],['🔑',['摸到極樂之鎖','極楽の錠前','Touch the key to paradise']],['🌶️',['調一罐自己的七味','マイ七味','Custom shichimi']],['🍦',['吃七味冰淇淋','七味ソフト','Shichimi ice cream']],['🎋',['抽一支籤','おみくじ','Draw an omikuji']],['🏯',['和山門合照','山門で写真','Photo at the gate']],['🖼️',['美術館露台看善光寺','美術館テラスから善光寺','Temple from the museum roof']],['🥩',['吃到信州和牛','信州牛','Shinshu wagyu']],['🍎',['買到蘋果伴手禮','りんごのお土産','Apple souvenir']],['🎫',['買好明天新幹線票','明日の新幹線切符','Tomorrow\'s train tickets']],['🍶',['喝一杯信州地酒','信州の地酒','Local sake']]],
+ eats:[['信州牛焼肉 深山','信州牛焼肉 深山','Shinshu-gyu Yakiniku Miyama',['主推信州和牛，週六要先訂。','信州牛の焼肉。土曜は予約を。','Shinshu wagyu; book for Saturday.'],'長野県長野市南千歳1-3-11 信州牛焼肉 深山'],['信州黒毛和牛 焼肉 泰','信州黒毛和牛 焼肉 泰','Yakiniku Tai',['備案，同在長野站前。','第二候補。駅前。','Backup, also near the station.'],'長野県長野市南長野北石堂町1373-1 焼肉 泰'],['仲見世通 蕎麥麵、おやき','仲見世通りのそば・おやき','Nakamise soba & oyaki',['午餐就在參道上解決。','参道でランチ。','Lunch right on the temple street.'],'善光寺 仲見世通り そば'],['八幡屋礒五郎 七味冰淇淋','八幡屋礒五郎 七味ソフト','Yawataya shichimi ice cream',['甜點是辣的。','甘くて辛い。','Sweet and spicy.'],'長野県長野市大門町83 八幡屋礒五郎']]
+},
+{n:5,date:'2027-02-21',wd:['日','日','Sun'],c:'#3441A6',emo:'🗼',scene:'city',props:['🏮','🐧','🌃'],
+ title:['淺草<br>晴空塔','浅草と<br>スカイツリー','Asakusa<br>& Skytree'],tab:['長野 → 東京','長野 → 東京','Nagano → Tokyo'],
+ chip:['雷門・水街・夜景','雷門・ミズマチ・夜景','Kaminarimon · river · night view'],
+ lead:['早上新幹線進東京，淺草豪景酒店寄行李。雷門淺草寺、沿隅田川走到水街，水族館看企鵝，傍晚上晴空塔看夕陽變夜景。','朝の新幹線で東京へ。浅草ビューホテルに荷物を預け、浅草寺、隅田川、水族館、夕方はスカイツリー。','Morning train to Tokyo, bags at Asakusa View Hotel. Senso-ji, a riverside walk, penguins, then Skytree from sunset to night.'],
+ trans:['長野 → 上野 新幹線（約 80–95 分）。上野轉東京地鐵銀座線到田原町（5 分，¥180），3 號出口走 6 分鐘到飯店。晚上押上站搭都營淺草線到淺草（3 分，¥180）。','新幹線で上野へ。銀座線で田原町（5分、¥180）、3番出口から徒歩6分。夜は押上から都営浅草線で浅草（¥180）。','Shinkansen to Ueno (80–95 min). Ginza Line to Tawaramachi (5 min, ¥180), Exit 3, 6-min walk. Evening: Toei Asakusa Line Oshiage → Asakusa (¥180).'],
+ route:['東横INN長野駅東口','JR上野駅','浅草ビューホテル','浅草寺','東京ミズマチ','すみだ水族館','東京スカイツリー'],
+ items:[
+ ['08:30','09:00','🧳',['東橫 INN 退房，走到長野站','チェックアウト、長野駅へ','Check out, walk to Nagano Station'],['步行 5–7 分','徒歩5–7分','5–7 min walk'],['—','—','—'],null,'JR長野駅 新幹線改札',['票昨天已買好，直接進站。','切符は前日に購入済み。','Tickets bought yesterday; go straight in.'],{}],
+ ['09:17','10:31','🚅',['Kagayaki 504 長野 → 上野','かがやき504号 長野 → 上野','Kagayaki 504: Nagano → Ueno'],['北陸新幹線，約 70 分','北陸新幹線 約70分','Hokuriku Shinkansen, ~70 min'],['昨天在長野站買好','前日購入済み','Bought yesterday'],[8340,8340],'JR上野駅',['在上野下車，不要坐到東京站。備案 Hakutaka 556 9:47（有自由席）。','上野で下車。予備：はくたか556号9:47。','Get off at Ueno, not Tokyo. Backup: Hakutaka 556, 9:47.'],{tr:1,book:'jr2',ph:'jr2'}],
+ ['10:45','11:15','🚇',['上野 → 淺草豪景酒店','上野 → 浅草ビューホテル','Ueno → Asakusa View Hotel'],['銀座線上野 → 田原町（5 分），3 號出口步行 6 分','銀座線 上野→田原町（5分）、3番出口徒歩6分','Ginza Line to Tawaramachi (5 min), Exit 3, 6-min walk'],['IC 卡','IC','IC card'],[180,180],'東京都台東区西浅草3-17-1 浅草ビューホテル',['15:00 後才能入住，先寄放大行李。','15時以降チェックイン。荷物を預ける。','Check-in after 15:00; leave bags.'],{tr:1,ph:'luggage'}],
+ ['11:30','13:00','🏮',['淺草寺、雷門、仲見世','浅草寺・雷門・仲見世','Senso-ji, Kaminarimon, Nakamise'],['飯店步行 6–8 分','ホテルから徒歩6–8分','6–8 min walk'],['參拜免費；小吃 IC 卡／現金','参拝無料','Free; snacks by IC or cash'],null,'東京都台東区浅草2-3-1 浅草寺',['週日人超多，顧好隨身物品。吃人形燒、炸饅頭。','日曜は大混雑。人形焼・揚げまんじゅう。','Sunday crowds; mind your bags. Try ningyo-yaki.'],{must:1,ph:'photo'}],
+ ['13:00','14:00','🍲',['午餐：淺草老店','昼食：浅草の老舗','Lunch: old Asakusa favourites'],['淺草寺周邊步行','浅草寺周辺','Near Senso-ji'],['信用卡／現金','カード・現金','Card or cash'],[1500,3000],'浅草 今半',['淺草今半、染太郎文字燒、大黑家天婦羅。12 人可能要分桌。','今半、染太郎、大黒家。12名は分かれる可能性あり。','Asakusa Imahan, Sometaro, Daikokuya. 12 may need to split.'],{ph:'table'}],
+ ['14:00','15:30','🌉',['隅田公園 ＆ 東京水街','隅田公園・東京ミズマチ','Sumida Park & Tokyo Mizumachi'],['沿隅田川步道走過東武鐵橋','隅田川沿いを歩き東武橋梁を渡る','Riverside path over the Tobu bridge'],['步行免費','無料','Free'],null,'東京都墨田区向島1丁目 東京ミズマチ',['沿途拍晴空塔倒影，水街比主街安靜。','スカイツリーの写真スポット。','Skytree reflections; quieter than the main streets.'],{}],
+ ['15:30','16:30','🐧',['隅田水族館','すみだ水族館','Sumida Aquarium'],['晴空街 5–6 樓','ソラマチ5・6階','Solamachi 5F–6F'],['現場或線上購票','現地・ネット購入','On site or online'],[2500,2500],'東京都墨田区押上1-1-2 東京スカイツリータウン・ソラマチ5F・6F',['近距離企鵝池和水母隧道。','ペンギンとクラゲが近い。','Up close with penguins and jellyfish.'],{}],
+ ['16:45','18:30','🌇',['晴空塔展望台：夕陽＋夜景','スカイツリー：夕日と夜景','Skytree: sunset + night view'],['同棟 4 樓售票／入口','同じ建物の4階','4F entrance, same building'],['線上預訂（12/1 開賣）','ネット予約（12/1発売）','Online (on sale Dec 1)'],[3100,3500],'東京都墨田区押上1-1-2 東京スカイツリー',['預約 16:30–17:00 時段，白天、夕陽、夜景一次看。天氣好看得到富士山。','16:30–17:00枠で昼・夕日・夜景。晴れれば富士山も。','16:30–17:00 slot: day, sunset and night. Fuji on a clear day.'],{must:1,book:'sky2'}],
+ ['18:30','20:30','🍜',['晴空街晚餐、逛街','ソラマチで夕食・買い物','Dinner & shopping at Solamachi'],['商場 6–7 樓美食街','6・7階レストラン街','6F–7F restaurant floors'],['信用卡／IC卡','カード・IC','Card or IC'],[2000,3500],'東京スカイツリータウン・ソラマチ',['六厘舍沾麵、利久牛舌、洋食都有，地下街也好逛。','六厘舎、利久など。','Rokurinsha tsukemen, Rikyu beef tongue and more.'],{ph:'number'}],
+ ['20:45','21:15','🛏️',['回淺草豪景酒店入住','浅草ビューホテルにチェックイン','Check in at Asakusa View'],['押上搭都營淺草線到淺草（3 分），走 8–10 分','押上→浅草（都営浅草線3分）、徒歩8–10分','Toei Asakusa Line (3 min), 8–10 min walk'],['IC 卡','IC','IC card'],[180,180],'東京都台東区西浅草3-17-1 浅草ビューホテル',['高樓層看得到淺草寺和晴空塔夜景。','高層階から浅草寺とスカイツリー。','High floors overlook Senso-ji and Skytree.'],{tr:1}]
+ ],
+ pack:[['🚅',['新幹線車票（昨天買好）','新幹線の切符','Shinkansen tickets'],1],['🗼',['晴空塔預約 QR','スカイツリーQR','Skytree QR'],1],['💳',['Suica 有餘額','Suica残高','Suica topped up'],1],['🏨',['飯店預約','ホテル予約','Hotel booking'],0],['👟',['好走的鞋','歩きやすい靴','Comfy shoes'],0],['🔋',['行動電源','モバイルバッテリー','Power bank'],0]],
+ bingo:[['🏮',['雷門大燈籠合照','雷門で写真','Photo at Kaminarimon']],['🎋',['抽淺草寺籤','浅草寺おみくじ','Senso-ji omikuji']],['🍘',['吃人形燒','人形焼','Ningyo-yaki']],['🌉',['拍到晴空塔倒影','逆さスカイツリー','Skytree reflection']],['🐧',['看到企鵝','ペンギン','See a penguin']],['🪼',['走過水母區','クラゲ','Jellyfish zone']],['🌇',['展望台看到夕陽','展望台から夕日','Sunset from the deck']],['🗻',['看到富士山','富士山','Spot Mt Fuji']],['🌃',['拍到東京夜景','東京の夜景','Tokyo night shot']],['🍜',['吃到沾麵','つけ麺','Tsukemen']],['🚇',['自己轉地鐵沒迷路','地下鉄で迷わない','Subway, no wrong turns']],['🛍️',['買到晴空塔限定','スカイツリー限定','Skytree-only souvenir']]],
+ eats:[['淺草今半','浅草今半','Asakusa Imahan',['百年壽喜燒。','老舗すき焼き。','Century-old sukiyaki.'],'浅草今半 本店'],['染太郎','染太郎','Sometaro',['自己煎的文字燒、大阪燒。','お好み焼き・もんじゃ。','DIY okonomiyaki & monja.'],'浅草 染太郎'],['大黑家天婦羅','大黒家天麩羅','Daikokuya Tempura',['醬汁炸蝦天丼。','天丼の名店。','Famous tendon.'],'大黒家天麩羅 浅草'],['六厘舍（晴空街）','六厘舎（ソラマチ）','Rokurinsha (Solamachi)',['濃厚沾麵，常排隊。','濃厚つけ麺。','Rich tsukemen; expect a queue.'],'六厘舎 ソラマチ'],['利久牛舌（晴空街）','牛たん炭焼 利久（ソラマチ）','Rikyu beef tongue',['炭烤厚切牛舌。','炭焼き牛たん。','Charcoal-grilled beef tongue.'],'利久 ソラマチ']]
+},
+{n:6,date:'2027-02-22',wd:['一','月','Mon'],c:'#C97A12',emo:'✈️',scene:'plane',props:['🍱','⛩️','✈️'],
+ title:['鰻魚飯<br>回家','うなぎ食べて<br>帰国','Eel, then<br>home'],tab:['成田 → 台灣','成田 → 台湾','Narita → home'],
+ chip:['成田山・鰻魚飯','成田山・うなぎ','Naritasan · eel'],
+ lead:['退房搭都營淺草線直通京成到成田，行李寄車站置物櫃。表參道吃炭烤鰻魚飯、參拜成田山新勝寺，再坐 10 分鐘車到機場。','都営浅草線直通で京成成田へ。荷物はロッカー。参道でうなぎ、成田山を参拝し空港へ。','Through-train to Keisei Narita, bags in lockers. Grilled eel on the temple street, Naritasan Shinshoji, then 10 minutes to the airport.'],
+ trans:['淺草站搭都營淺草線直通「京成本線経由」的特急／快速到「京成成田站」約 70–80 分（不要搭 Access 特急，它不停京成成田）。之後京成本線 8–10 分到機場。全程刷 IC 卡。','京成本線経由の列車で「京成成田駅」へ（アクセス特急は停車しない）。その後8–10分で空港。','Take a through-train via the Keisei Main Line to Keisei Narita (70–80 min); the Access Express skips it. Then 8–10 min to the airport. IC card all the way.'],
+ route:['浅草ビューホテル','京成成田駅','成田山新勝寺 表参道 川豊本店','成田山新勝寺','成田国際空港'],
+ items:[
+ ['08:30','09:15','🍳',['早餐、退房','朝食・チェックアウト','Breakfast, check out'],['步行','徒歩','Walk'],['—','—','—'],null,'東京都台東区西浅草3-17-1 浅草ビューホテル',['帶全部行李出發，9 點走。','荷物を全部持って9時出発。','Leave at 9 with all bags.'],{}],
+ ['09:20','09:40','🛗',['走到都營淺草站','都営浅草駅へ','Walk to Toei Asakusa Station'],['步行 8–10 分，A2b 入口有電梯','徒歩8–10分、A2b出入口にエレベーター','8–10 min; elevator at entrance A2b'],['—','—','—'],null,'都営浅草駅 A2b出入口',['拖大行李走電梯，不要扛樓梯。','荷物があるのでエレベーターで。','Take the elevator with luggage.'],{}],
+ ['09:45','11:00','🚃',['淺草 → 京成成田（京成本線）','浅草 → 京成成田（京成本線経由）','Asakusa → Keisei Narita (Keisei Main Line)'],['都營淺草線直通「京成本線経由」的特急／快速，或青砥換京成本線特急，約 70–80 分','京成本線経由の特急・快速、または青砥で乗換、約70–80分','Through-train via Keisei Main Line, or change at Aoto; 70–80 min'],['IC 卡','IC','IC card'],[1100,1250],'京成成田駅',['不要搭「Access 特急」，它不停京成成田站！在京成成田下車，不是機場站。','アクセス特急は京成成田に停まりません！','Not the Access Express: it skips Keisei Narita! Get off at Keisei Narita, not the airport.'],{tr:1,warn:1,book:'narita',ph:'narita'}],
+ ['11:00','11:20','🔐',['寄放行李，走去表參道','ロッカーに荷物、参道へ','Lockers, then to the temple street'],['車站置物櫃，東／西口步行','駅のロッカー、東口・西口から徒歩','Station lockers, then walk'],['IC 卡或 100 円硬幣','ICか100円玉','IC or ¥100 coins'],[700,900],'京成成田駅 コインロッカー',['12 人行李多，置物櫃滿了就去 JR 成田站或觀光案內所人工寄放。','満杯ならJR成田駅か観光案内所へ。','If full, try JR Narita or the tourist office.'],{ph:'locker'}],
+ ['11:20','12:45','🍱',['午餐：炭烤鰻魚飯','昼食：うなぎ','Lunch: grilled eel'],['表參道步行約 10 分','参道を徒歩10分','10 min walk along the approach'],['信用卡／現金','カード・現金','Card or cash'],[3500,5000],'千葉県成田市仲町386 川豊本店',['川豐本店或駿河屋，到了先抽號碼牌，等位時逛老街。','川豊か駿河屋。着いたらまず整理券。','Kawatoyo or Surugaya. Grab a queue ticket first.'],{must:1,ph:'number'}],
+ ['12:45','14:15','⛩️',['成田山新勝寺','成田山新勝寺','Naritasan Shinshoji'],['表參道盡頭','参道の突き当たり','End of the approach'],['免費','無料','Free'],null,'千葉県成田市成田1 成田山新勝寺',['千年古剎，三重塔、光明堂都值得看。','三重塔と光明堂は必見。','Thousand-year temple; see the pagoda and Komyodo.'],{photo:1,ph:'photo'}],
+ ['14:15','15:00','🛍️',['買名產，回京成成田拿行李','お土産、ロッカーへ','Snacks, collect bags'],['步行','徒歩','Walk'],['現金／IC卡','現金・IC','Cash or IC'],null,'京成成田駅',['米果、羊羹。','せんべい・羊羹。','Rice crackers, yokan.'],{}],
+ ['15:10','15:25','🚃',['京成成田 → 成田機場','京成成田 → 成田空港','Keisei Narita → Airport'],['京成本線 8–10 分','京成本線 8–10分','Keisei Main Line, 8–10 min'],['IC 卡','IC','IC card'],[270,270],'成田国際空港',['先確認航班在第 1、2 還是 3 航廈，別提早下車。','ターミナル（1・2・3）を必ず確認。','Check T1, T2 or T3 before you ride.'],{tr:1,ph:'terminal'}],
+ ['15:30','18:00','✈️',['報到、託運、免稅店、搭機回台','チェックイン・免税店・帰国','Check in, duty free, fly home'],['機場內','空港内','In the airport'],['—','—','—'],null,'成田国際空港',['起飛前 2.5–3 小時到機場。','出発の2.5–3時間前に到着。','Arrive 2.5–3 h before departure.'],{}]
+ ],
+ pack:[['🛂',['護照','パスポート','Passport'],1],['🛫',['航班與航廈資訊','便名・ターミナル','Flight & terminal'],1],['💳',['Suica 有餘額','Suica残高','Suica topped up'],1],['🪙',['100 円硬幣（置物櫃）','100円玉（ロッカー）','¥100 coins (lockers)'],1],['💴',['剩下的日幣','残りの円','Leftover yen'],0],['📝',['伴手禮清單','お土産リスト','Souvenir list'],0]],
+ bingo:[['🎟️',['抽到鰻魚號碼牌','うなぎの整理券','Eel queue ticket']],['🍱',['吃完一整份鰻重','うな重完食','Finish the unaju']],['🔪',['看到師傅剖鰻魚','うなぎをさばく職人','See the eel chef at work']],['⛩️',['走到大本堂','大本堂へ','Reach the main hall']],['🏯',['看到三重塔','三重塔','See the pagoda']],['🍘',['買到米果','せんべい','Buy senbei']],['🔐',['置物櫃一次找到','ロッカー即確保','Lockers first try']],['✅',['沒下錯車站','降りる駅を間違えない','Right station, first time']],['🛫',['沒走錯航廈','ターミナル間違えない','Right terminal']],['🛍️',['免稅店買到伴手禮','免税店でお土産','Duty-free haul']],['🍙',['機場吃最後一個飯糰','空港でおにぎり','Last onigiri']],['👋',['12 人全員準時登機','12名全員搭乗','All 12 board on time']]],
+ eats:[['川豐 本店','川豊本店','Kawatoyo Honten',['百年炭烤鰻魚，門口現剖。','店先でさばく老舗。','Century-old; eel prepared out front.'],'千葉県成田市仲町386 川豊本店'],['駿河屋','駿河屋','Surugaya',['另一間百年鰻魚店，備案。','もう一つの老舗。','The other historic eel house.'],'千葉県成田市仲町359 駿河屋']]
+}
+];
+DAYS.forEach(d=>{d.items=d.items.map(a=>({s:a[0],e:a[1],ic:a[2],t:a[3],m:a[4],p:a[5],c:a[6],addr:a[7],n:a[8],...a[9]}))});
+const STAYS=[
+ [['白馬村住宿（待確認）','白馬の宿（未定）','Hakuba lodging (TBC)'],'2/17–2/20',['3 晚','3泊','3 nights'],''],
+ [['東橫 INN 長野站東口','東横INN長野駅東口','Toyoko Inn Nagano Eki Higashiguchi'],'2/20',['1 晚','1泊','1 night'],'長野県長野市栗田2137 東横INN長野駅東口'],
+ [['淺草豪景酒店','浅草ビューホテル','Asakusa View Hotel'],'2/21',['1 晚','1泊','1 night'],'東京都台東区西浅草3-17-1 浅草ビューホテル']
+];
+const TIPS=[
+ ['手機錢包綁 Suica 或 PASMO，地鐵、長野巴士、成田京成和超商都能感應付款。','スマホにSuica・PASMOを入れておくと、電車・バス・コンビニで使えて便利。','Add Suica or PASMO to your phone wallet: trains, buses and konbini all take it.'],
+ ['所有時間都是日本時間，比台灣快 1 小時，下飛機記得看手機有沒有自動換。','時刻はすべて日本時間（台湾+1時間）。','All times are Japan time, 1 hour ahead of Taiwan.'],
+ ['巴士一次預約上限 12 人，剛好整團；開放日一到就訂。','バス予約は1回12名まで（全員ちょうど）。','Bus bookings cap at 12 per booking: exactly us. Book on opening day.'],
+ ['新幹線行李三邊合計超過 160 公分要預約特大行李座位，雪具若用租的就不用擔心。','3辺160cm超の荷物は特大荷物スペース付き座席が必要。','Bags over 160 cm total need an oversized-baggage seat; rentals avoid this.']
+];
+
+/* ---------- shared sync (db) ---------- */
+const SYNC={db:null,user:null,me:null,canTasks:false,tasks:{},crew:{},crewOK:false,names:{},nameKey:''};
+function taskDone(id){return SYNC.db?!!(SYNC.tasks[id]&&SYNC.tasks[id].done):store.get('task-'+id,false)}
+function myState(){
+ const loc=store.get('mine',null)||{pack:{},bingo:{},votes:{}};
+ const src=(SYNC.crewOK&&SYNC.me&&SYNC.crew[SYNC.me])?SYNC.crew[SYNC.me]:loc;
+ return {pack:{...(src.pack||{})},bingo:{...(src.bingo||{})},votes:{...(src.votes||{})}};
+}
+let pendingMine=null,writingMine=false;
+function saveMine(s){
+ store.set('mine',s);
+ if(!(SYNC.db&&SYNC.me&&SYNC.crewOK))return;
+ SYNC.crew[SYNC.me]={...s,at:Date.now()};
+ pendingMine={pack:s.pack,bingo:s.bingo,votes:s.votes||{},at:Date.now()};flushMine();
+}
+async function flushMine(){
+ if(writingMine)return;writingMine=true;
+ while(pendingMine){const p=pendingMine;pendingMine=null;
+  try{await SYNC.db.doc('crew/'+SYNC.me).set(p)}catch(e){if(e&&(e.code==='invalid_argument'||e.code==='not_granted'||e.code==='revoked')){SYNC.crewOK=false;pendingMine=null;render()}}}
+ writingMine=false;
+}
+async function setTask(id,done){
+ if(!SYNC.db){store.set('task-'+id,done);render();return}
+ if(!SYNC.canTasks){render();return}
+ const next={...SYNC.tasks,[id]:{done,by:SYNC.me||'',at:Date.now()}};
+ SYNC.tasks=next;render();
+ try{await SYNC.db.doc('trip/tasks').set(next)}catch(e){SYNC.canTasks=false;render()}
+}
+function refreshNames(){
+ if(!SYNC.user)return;
+ const ids=[...new Set([...Object.keys(SYNC.crew),...Object.values(SYNC.tasks).map(t=>t&&t.by).filter(Boolean)])].sort();
+ const key=ids.join(',');if(!ids.length||key===SYNC.nameKey)return;SYNC.nameKey=key;
+ SYNC.user.profiles(ids).then(ps=>{SYNC.names=ps;render()});
+}
+const who=id=>{const p=SYNC.names[id];return (p&&p.name)||(id===SYNC.me?U('you'):U('someone'))};
+let renderTimer=null;const soon=()=>{clearTimeout(renderTimer);renderTimer=setTimeout(render,120)};
+async function initSync(){
+ if(!window.claude||!window.claude.use)return;
+ const [db,user]=await Promise.all([window.claude.use('db'),window.claude.use('user')]);
+ SYNC.user=user;if(!db)return;
+ SYNC.db=db;
+ if(user){SYNC.me=await user.id();const own=await user.isOwner(),ed=await user.canEdit();SYNC.canTasks=own||ed;}
+ SYNC.crewOK=!!SYNC.me;
+ db.doc('trip/tasks').onSnapshot(s=>{SYNC.tasks=s.exists?{...s.data()}:{};refreshNames();soon()},()=>{});
+ db.collection('crew').onSnapshot(q=>{const c={};q.docs.forEach(d=>{c[d.id]=d.data()});
+   if(SYNC.me&&!c[SYNC.me]&&SYNC.crew[SYNC.me])c[SYNC.me]=SYNC.crew[SYNC.me];
+   SYNC.crew=c;refreshNames();soon()},()=>{});
+ render();
+}
+
+/* ---------- time ---------- */
+let simTs=null;
+const nowTs=()=>simTs??Date.now();
+const ts=(date,hm)=>Date.parse(`${date}T${hm}:00+09:00`);
+DAYS.forEach(d=>d.items.forEach(it=>{it.S=ts(d.date,it.s);it.E=ts(d.date,it.e)}));
+const TRIP_S=DAYS[0].items[0].S, TRIP_E=DAYS[5].items.at(-1).E;
+const jstDate=t=>new Date(t+9*3600e3).toISOString().slice(0,10);
+const daysBetween=(fromTs,dateStr)=>Math.round((Date.parse(dateStr+'T00:00:00+09:00')-Date.parse(jstDate(fromTs)+'T00:00:00+09:00'))/864e5);
+function itemState(it){const n=nowTs();return n>=it.E?'past':n>=it.S?'now':'next'}
+function tripStatus(){
+ const n=nowTs();
+ if(n<TRIP_S) return {k:'before',days:daysBetween(n,DAYS[0].date)};
+ if(n>=TRIP_E) return {k:'after'};
+ for(const d of DAYS){
+   const its=d.items;
+   if(n<its[0].S) return {k:'rest',day:d,next:its[0]};
+   if(n<its.at(-1).E){
+     const cur=its.find(i=>n>=i.S&&n<i.E);
+     if(cur) return {k:'now',day:d,cur,next:its[its.indexOf(cur)+1]};
+     return {k:'move',day:d,next:its.find(i=>i.S>n)};
+   }
+ }
+ return {k:'after'};
+}
+function todayDay(){const s=tripStatus();return s.day&&s.k!=='rest'?s.day:(s.k==='rest'?s.day:null)}
+const fmtTime=t=>new Date(t+9*3600e3).toISOString().slice(11,16);
+function taskState(t){
+ if(taskDone(t.id)) return {k:'done',txt:U('doneP')};
+ if(t.open==='onsite') return {k:'warn',txt:U('onsite')};
+ if(!t.open) return {k:'open',txt:U('openNow')};
+ const d=daysBetween(nowTs(),t.open);
+ if(d>0) return {k:'wait',txt:U('opensIn',d),d};
+ if(d===0) return {k:'now',txt:U('opensToday'),d};
+ return {k:'open',txt:U('openNow'),d};
+}
+
+/* ---------- render helpers ---------- */
+function phraseBtn(id,inline){
+ const p=PH[id]; if(!p||lang==='ja') return '';
+ return `<button class="jp" type="button" data-ph="${id}"><span class="ic">日本語</span><span style="min-width:0"><span class="ja">${esc(p.ja)}</span><span class="mean">${esc(L(p.m))}</span></span></button>`;
+}
+function sceneSVG(kind){
+ const W=800,H=150;
+ const mount=`<polygon points="0,150 0,95 90,40 170,90 260,25 360,85 450,35 560,95 640,45 720,85 800,55 800,150" fill="rgba(255,255,255,.22)"/>
+ <polygon points="230,48 260,25 290,48 275,44 260,52 245,44" fill="#fff"/><polygon points="425,55 450,35 475,55 460,50 450,58 440,50" fill="#fff"/><polygon points="615,65 640,45 665,65 650,60 640,68 630,60" fill="#fff"/>
+ <polygon points="0,150 0,115 120,70 220,110 330,62 440,112 560,72 680,118 800,85 800,150" fill="rgba(255,255,255,.38)"/>`;
+ const ground=`<path d="M0,128 Q200,112 400,126 T800,120 L800,150 L0,150 Z" fill="#F7FBFF"/>`;
+ if(kind==='city') return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+ <g fill="rgba(255,255,255,.25)"><rect x="20" y="80" width="50" height="70"/><rect x="80" y="60" width="40" height="90"/><rect x="130" y="90" width="60" height="60"/><rect x="420" y="70" width="45" height="80"/><rect x="480" y="95" width="70" height="55"/><rect x="560" y="65" width="40" height="85"/><rect x="690" y="85" width="60" height="65"/></g>
+ <g fill="rgba(255,255,255,.55)"><polygon points="296,150 304,20 312,150"/><rect x="292" y="58" width="24" height="7" rx="2"/><rect x="295" y="40" width="18" height="5" rx="2"/></g>
+ <path d="M0,132 Q200,124 400,134 T800,128 L800,150 L0,150 Z" fill="#7FB6E6"/></svg>`;
+ if(kind==='temple') return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMax slice" aria-hidden="true">${mount}
+ <g fill="rgba(23,38,60,.55)"><polygon points="300,92 400,62 500,92"/><rect x="330" y="92" width="140" height="10"/><polygon points="320,102 400,82 480,102"/><rect x="345" y="102" width="110" height="28"/></g>${ground}</svg>`;
+ if(kind==='plane') return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+ <circle cx="680" cy="40" r="60" fill="rgba(255,226,140,.45)"/>
+ <path d="M0,110 Q160,96 320,108 T640,102 T800,100 L800,150 L0,150 Z" fill="rgba(255,255,255,.3)"/>
+ <path d="M60,60 C200,40 300,70 420,50" stroke="rgba(255,255,255,.7)" stroke-width="3" fill="none" stroke-dasharray="8 8"/>
+ <path d="M0,130 Q200,118 400,130 T800,124 L800,150 L0,150 Z" fill="#FFF4DE"/></svg>`;
+ if(kind==='slope') return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMax slice" aria-hidden="true">${mount}
+ <line x1="120" y1="40" x2="700" y2="10" stroke="rgba(23,38,60,.5)" stroke-width="2"/>
+ <g fill="rgba(23,38,60,.6)"><rect x="300" y="28" width="16" height="14" rx="3"/><rect x="520" y="18" width="16" height="14" rx="3"/></g>${ground}</svg>`;
+ return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMax slice" aria-hidden="true">${mount}${ground}</svg>`;
+}
+function snowHTML(n){let s='';for(let i=0;i<n;i++){const l=Math.round(Math.random()*100),dl=(Math.random()*8).toFixed(1),du=(6+Math.random()*7).toFixed(1),sz=(3+Math.random()*5).toFixed(1);s+=`<i class="flake" style="left:${l}%;animation-delay:-${dl}s;animation-duration:${du}s;width:${sz}px;height:${sz}px"></i>`}return `<div class="snow" aria-hidden="true">${s}</div>`}
+
+function statusCard(dayFilter){
+ const s=tripStatus();let h='';
+ if(s.k==='before'){
+  const nt=TASKS.filter(t=>!taskDone(t.id)&&t.open&&t.open!=='onsite').sort((a,b)=>a.open.localeCompare(b.open))[0]||TASKS.find(t=>!taskDone(t.id));
+  h=`<div class="big"><span>❄️</span><span>${U('before',s.days)}</span></div>`;
+  if(nt){const st=taskState(nt);h+=`<div class="small"><b>${U('nextTask')}：</b>${nt.ic} ${esc(L(nt.t))} <span class="pill ${st.k}">${esc(st.txt)}</span></div>`}
+ }else if(s.k==='after'){h=`<div class="big"><span>🏠</span><span>${U('ended')}</span></div>`}
+ else if(s.k==='now'){h=`<div class="big"><i class="pulse"></i><span>${U('ongoing')}</span></div><div><b>${s.cur.ic} ${esc(L(s.cur.t))}</b> <span class="muted num">${U('until')} ${s.cur.e}</span></div>${s.next?`<div class="small muted">${U('nextStop')} <span class="num">${s.next.s}</span> ${esc(L(s.next.t))}</div>`:''}`}
+ else if(s.k==='move'){h=`<div class="big"><span>🚃</span><span>${U('moving')}</span></div>${s.next?`<div><b>${U('nextStop')}</b> <span class="num">${s.next.s}</span> ${s.next.ic} ${esc(L(s.next.t))}</div>`:''}`}
+ else if(s.k==='rest'){h=`<div class="big"><span>🌙</span><span>${U('resting')}</span></div><div><b>${U('tomorrow')}</b> <span class="num">${s.next.s}</span> ${esc(L(s.next.t))}</div>`}
+ h+=`<div class="chips" style="margin-top:4px"><span class="chip" style="background:var(--okbg)">✈️ ${U('flightOut')}</span><span class="chip y">✈️ ${U('flightBack')}</span><span class="chip">🇯🇵 ${U('tz')}</span></div>`;
+ const simVal=simTs?new Date(simTs+9*3600e3).toISOString().slice(0,16):'';
+ h+=`<div class="sim"><label for="simInput">🕹️ ${U('sim')}</label><input id="simInput" type="datetime-local" min="2027-02-16T00:00" max="2027-02-23T23:59" value="${simVal}"><button class="btn sm" type="button" id="simClear">${U('simClear')}</button><span class="muted">${U('simNote')}</span></div>`;
+ return `<section><div class="sh"><span class="tag" style="--tagc:var(--red)">${U('now')}</span><span class="sub num">${fmtTime(nowTs())} JST</span></div><div class="card status">${h}</div></section>`;
+}
+
+function syncNote(tasks){
+ const on=SYNC.db&&(tasks||SYNC.crewOK);
+ let t=on?U('syncOn'):U('syncLocal');
+ if(on&&tasks)t+=' · '+(SYNC.canTasks?U('syncOwner'):U('syncRead'));
+ return `<div class="small muted" style="font-weight:700">${t}</div>`;
+}
+function bingoLines(s){return LINES.filter(l=>l.every(i=>s.marks&&s.marks[i])).length}
+function teamPack(d){
+ if(!(SYNC.db&&SYNC.crewOK))return '';
+ const ids=Object.keys(SYNC.crew);
+ const mustIdx=d.pack.map((p,i)=>p[2]?i:-1).filter(i=>i>=0);
+ const rows=ids.map(id=>{const pk=(SYNC.crew[id]&&SYNC.crew[id].pack)||{};const n=d.pack.filter((p,i)=>pk[`${d.n}-${i}`]).length;const ok=mustIdx.every(i=>pk[`${d.n}-${i}`]);return {id,n,ok}}).filter(r=>r.n>0).sort((a,b)=>b.n-a.n);
+ return `<div class="card small"><b>👥 ${U('teamPack')}</b><div class="chips" style="margin-top:8px">${rows.length?rows.map(r=>`<span class="chip">${r.ok?'✅':'🎒'} ${esc(who(r.id))} <span class="num muted">${r.n}/${d.pack.length}</span></span>`).join(''):`<span class="muted">${U('noOne')}</span>`}</div></div>`;
+}
+function teamBingo(d){
+ if(!(SYNC.db&&SYNC.crewOK))return '';
+ const rows=Object.keys(SYNC.crew).map(id=>{const b=(SYNC.crew[id]&&SYNC.crew[id].bingo||{})[d.n];return {id,n:b?bingoLines(b):0}}).filter(r=>r.n>0);
+ return `<div class="card small"><b>🎉 ${U('teamBingo')}</b><div class="chips" style="margin-top:8px">${rows.length?rows.map(r=>`<span class="chip y">${esc(who(r.id))} × ${r.n}</span>`).join(''):`<span class="muted">${U('noOne')}</span>`}</div></div>`;
+}
+
+/* ---------- views ---------- */
+let view='overview';
+function heroHTML(opts){
+ return `<div class="hero" style="--day:${opts.c}">${snowHTML(26)}<div class="wrap">
+ <h1>${opts.title}</h1><div class="chips">${opts.chips}</div><p class="lead">${esc(opts.lead)}</p></div>
+ <div class="scene">${sceneSVG(opts.scene)}</div><div class="props" aria-hidden="true">${opts.props.map(p=>`<span>${p}</span>`).join('')}</div></div>`;
+}
+function renderTabs(){
+ const t=todayDay();
+ const tabs=[{k:'simple',e:'📄',b:U('simple'),s:U('simplesub'),c:'#4F6580'},{k:'overview',e:'🗾',b:U('overview'),s:U('ovsub'),c:'#17263C'}].concat(DAYS.map(d=>({k:'day-'+d.n,e:d.emo,b:U('dayN',d.n),s:d.date.slice(5).replace('-','/'),c:d.c,today:t===d})));
+ document.getElementById('tabs').innerHTML=tabs.map(x=>`<button class="tab${x.today?' today':''}" role="tab" type="button" data-v="${x.k}" aria-selected="${view===x.k}" style="--tc:${x.c}"><span class="e">${x.e}</span><span><b>${esc(x.b)}</b><small>${esc(x.s)}</small></span><i class="live"></i></button>`).join('');
+ const sel=document.querySelector('.tab[aria-selected="true"]');if(sel)sel.scrollIntoView({block:'nearest',inline:'center'});
+}
+function costRows(){
+ let tmin=0,tmax=0;const rows=[];
+ DAYS.forEach(d=>d.items.filter(i=>i.tr&&i.c).forEach(i=>{rows.push([d,i]);tmin+=i.c[0];tmax+=i.c[1]}));
+ return {rows,tmin,tmax};
+}
+function renderOverview(){
+ document.getElementById('hero').innerHTML=heroHTML({c:'#2B7BB9',title:U('tripTitle'),scene:'mount',props:['🏂','🏯','🗼'],
+  chips:`<span class="chip">📅 2027/2/17–2/22</span><span class="chip y">👥 ${U('people')}</span><span class="chip">🕘 ${U('tz')}</span>`,lead:U('tripLead')});
+ let h=statusCard();
+ h+=todoHub();
+ // tasks
+ h+=`<section><div class="sh"><span class="tag" style="--tagc:#C8432C">${U('tasksT')}</span><span class="sub">${U('tasksSub')}</span></div>${syncNote(true)}<div class="tasks">`;
+ const order=[...TASKS].sort((a,b)=>{const ka=a.open&&a.open!=='onsite'?a.open:(a.open==='onsite'?'9':'0');const kb=b.open&&b.open!=='onsite'?b.open:(b.open==='onsite'?'9':'0');return ka.localeCompare(kb)});
+ order.forEach(t=>{
+  const st=taskState(t);
+  const tinfo=SYNC.tasks[t.id];const lock=SYNC.db&&!SYNC.canTasks;
+  h+=`<div class="card task${st.k==='done'?' done':''}"><input class="cb" type="checkbox" id="task-${t.id}" data-task="${t.id}" ${st.k==='done'?'checked':''} ${lock?'disabled':''} aria-label="${esc(L(t.t))}">
+  <div class="task-body"><div class="task-top"><h3>${t.ic} ${esc(L(t.t))}</h3><span class="pill ${st.k}">${esc(st.txt)}</span></div>
+  ${st.k==='done'&&tinfo&&tinfo.by?`<div class="small" style="color:var(--ok);font-weight:800">✓ ${esc(who(tinfo.by))} · ${new Date(tinfo.at+9*3600e3).toISOString().slice(5,10).replace('-','/')}</div>`:''}
+  <div class="facts"><span>🗓️ ${t.date.slice(5).replace('-','/')}</span>${t.facts.map(f=>`<span>· ${esc(L(f))}</span>`).join('')}</div>
+  ${t.warn?`<div class="alert"><b>⚠️</b> ${esc(L(t.warn))}</div>`:''}
+  <div class="small">${esc(L(t.body))}</div>
+  ${t.link?`<div class="links"><a class="btn sm y" href="${t.link[0]}" target="_blank" rel="noopener">🔗 ${esc(L(t.link[1]))}</a></div>`:''}
+  ${(t.phr||[]).map(p=>phraseBtn(p)).join('')}
+  </div></div>`;
+ });
+ h+=`</div></section>`;
+ // why + share
+ h+=`<section><div class="sh"><span class="tag" style="--tagc:#178E9A">${U('whyT')}</span><span class="sub">${U('whySub')}</span></div><div class="card" style="display:flex;flex-direction:column;gap:12px">
+ <ol style="margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:8px">${WHY.map(w=>`<li><b>${esc(L(w[0]))}</b><br><span class="small">${esc(L(w[1]))}</span></li>`).join('')}</ol>
+ <div class="links"><button class="btn y" type="button" id="copyLine">📋 ${U('copyLine')}</button></div>
+ <textarea id="lineText" readonly hidden style="width:100%;min-height:220px;font:inherit;font-size:14px;border:2px solid var(--line);border-radius:12px;padding:10px;background:var(--card2);color:var(--ink)"></textarea>
+ <div class="small muted" id="copyMsg" aria-live="polite"></div></div></section>`;
+ // schedule
+ h+=`<section><div class="sh"><span class="tag" style="--tagc:#3441A6">${U('schedT')}</span><span class="sub">${U('schedSub')}</span></div><div class="card tbl"><table style="min-width:0"><thead><tr><th>${U('leg')}</th><th>${U('pick')}</th><th>${U('backup')}</th></tr></thead><tbody>${SCHED.map(r=>`<tr><td><b class="num">${r[0]}</b><br>${esc(L(r[1]))}</td><td><b class="num">${esc(L(r[2]))}</b><br><span class="pill ${r[4]==='ok'?'open':'warn'}" style="margin-top:4px">${U('v_'+r[4])}</span></td><td class="muted">${esc(L(r[3]))}</td></tr>`).join('')}</tbody></table><p class="small muted" style="margin:10px 0 0">${U('schedNote')}</p></div></section>`;
+ // JR card
+ h+=`<section><div class="sh"><span class="tag" style="--tagc:#178E9A">${U('jrCard')}</span><span class="sub">${U('jrCardSub')}</span></div><div class="card" style="display:flex;flex-direction:column;gap:10px">
+ ${['jr1','jr2','jrAlt','jrFree'].map(id=>`<button class="jp" type="button" data-ph="${id}" style="--day:#178E9A"><span class="ic">🚅</span><span style="min-width:0"><span class="ja">${esc(PH[id].ja)}</span>${lang!=='ja'?`<span class="mean">${esc(L(PH[id].m))}</span>`:''}</span></button>`).join('')}
+ </div></section>`;
+ // route
+ const rt=[['成田','成田','Narita','2/17'],['上野','上野','Ueno',''],['長野','長野','Nagano',''],['白馬','白馬','Hakuba','3'],['長野','長野','Nagano','1'],['淺草','浅草','Asakusa','1'],['成田','成田','Narita','2/22']];
+ h+=`<section><div class="sh"><span class="tag" style="--tagc:#2B7BB9">${U('routeT')}</span></div><div class="route">${rt.map((r,i)=>`${i?'<span class="arr">→</span>':''}<span class="stop">${esc(L(r))}${r[3]?`<small>${r[3].includes('/')?r[3]:(lang==='en'?r[3]+' night'+(r[3]>1?'s':''):lang==='ja'?r[3]+'泊':r[3]+' 晚')}</small>`:''}</span>`).join('')}</div></section>`;
+ // stays
+ h+=`<section><div class="sh"><span class="tag" style="--tagc:#6A55C4">${U('stayT')}</span></div><div class="card">${STAYS.map(s=>`<div class="eat"><h4>🏨 ${esc(L(s[0]))}</h4><div class="facts"><span class="num">${s[1]}</span><span>${esc(L(s[2]))}</span>${s[3]?`<a href="${gmap(s[3])}" target="_blank" rel="noopener">📍 ${esc(s[3])}</a>`:`<span class="pill warn">${U('tbd')}</span>`}</div></div>`).join('')}</div></section>`;
+ // days
+ h+=`<section><div class="sh"><span class="tag" style="--tagc:#178E9A">${U('daysT')}</span><span class="sub">${U('daysSub')} 👇</span></div><div class="daygrid">${DAYS.map(d=>`<button class="card daycard" type="button" data-v="day-${d.n}" style="--dc:${d.c}"><div class="band"><b>${U('dayN',d.n)} · ${d.date.slice(5).replace('-','/')}（${esc(L(d.wd))}）</b><span>${d.emo}</span></div><div class="inner"><h3>${L(d.title).replace(/<br>/g,' ')}</h3><div class="small muted">${esc(L(d.tab))}</div></div></button>`).join('')}</div></section>`;
+ // cost
+ const cr=costRows();
+ h+=`<section><div class="sh"><span class="tag" style="--tagc:#C97A12">${U('costT')}</span><span class="sub">${U('costSub')}</span></div><div class="card tbl"><table><thead><tr><th>${U('item')}</th><th class="r">${U('per')}</th><th class="r">${U('all')}</th></tr></thead><tbody>
+ ${cr.rows.map(([d,i])=>`<tr><td><span class="num muted">${d.date.slice(5).replace('-','/')}</span> ${esc(L(i.t))}</td><td class="r">${range(i.c[0],i.c[1])}</td><td class="r">${range(i.c[0]*GROUP,i.c[1]*GROUP)}</td></tr>`).join('')}
+ <tr class="total"><td>${U('total')}</td><td class="r">${range(cr.tmin,cr.tmax)}</td><td class="r">${range(cr.tmin*GROUP,cr.tmax*GROUP)}</td></tr></tbody></table></div></section>`;
+ // phrases
+ if(lang!=='ja'){
+  h+=`<section><div class="sh"><span class="tag" style="--tagc:#C8432C">${U('phrT')}</span><span class="sub">${U('phrSub')}</span></div><div class="card" style="display:flex;flex-direction:column;gap:10px;--day:#C8432C">${PHCATS.map(([c,ids])=>`<div class="phr-cat">${esc(L(c))}</div><div class="phr-grid">${ids.map(id=>phraseBtn(id)).join('')}</div>`).join('')}</div></section>`;
+ }
+ // tips
+ h+=`<section><div class="sh"><span class="tag" style="--tagc:#2B7BB9">${U('tipsT')}</span></div><div class="card"><ul style="margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px">${TIPS.map(t=>`<li>${esc(L(t))}</li>`).join('')}</ul></div></section>`;
+ return h;
+}
+function renderDay(d){
+ document.getElementById('hero').innerHTML=heroHTML({c:d.c,title:L(d.title),scene:d.scene,props:d.props,
+  chips:`<span class="chip">📅 ${d.date.slice(5).replace('-','/')} ${esc(L(d.wd))}</span><span class="chip y">${d.emo} ${esc(L(d.chip))}</span>`,lead:L(d.lead)});
+ const sp=d.items.filter(i=>i.c);const mn=sp.reduce((a,i)=>a+i.c[0],0),mx=sp.reduce((a,i)=>a+i.c[1],0);
+ const tr=d.items.filter(i=>i.c&&i.tr);const tmn=tr.reduce((a,i)=>a+i.c[0],0),tmx=tr.reduce((a,i)=>a+i.c[1],0);
+ let h=statusCard();
+ h+=`<section><div class="sh"><span class="tag">${U('todayT')}</span></div><div class="card" style="display:flex;flex-direction:column;gap:12px">
+ <div>${esc(L(d.trans))}</div>
+ <div class="chips"><span class="chip y">💰 ${U('spend')} ${range(mn,mx)}</span>${tr.length?`<span class="chip">🚃 ${U('transportOnly')} ${range(tmn,tmx)}</span>`:''}</div>
+ <div class="links"><a class="btn d" href="${gdir(d.route)}" target="_blank" rel="noopener">🗺️ ${U('navBtn')}</a></div></div></section>`;
+ // timeline
+ h+=`<section><div class="sh"><span class="tag">${U('tlT')}</span><span class="sub">${U('tlSub')}</span></div><div class="tl">`;
+ const n=nowTs();let gapShown=false;
+ d.items.forEach((it,idx)=>{
+  const st=itemState(it);
+  if(!gapShown&&st==='next'&&idx>0&&n>=d.items[idx-1].E&&n<it.S){h+=`<div class="gap-now"><i class="pulse"></i>${U('moving')}</div>`;gapShown=true}
+  const tk=it.book?TASKS.find(t=>t.id===it.book):null;
+  h+=`<div class="ti ${st}" data-i="${idx}"><div class="clock">${it.s}</div><div class="card" role="button" tabindex="0" aria-expanded="false">
+   <div class="head"><span class="ico" aria-hidden="true">${it.ic}</span><div class="htxt"><h3>${esc(L(it.t))}</h3><div class="when">${it.s}–${it.e}${it.c?` · ${range(it.c[0],it.c[1])}`:''}</div>
+   <div class="gbtns">${GLINK[d.n+'-'+it.s]?`<button class="gbtn" type="button" data-guide="${GLINK[d.n+'-'+it.s]}">${esc(L(GKIND[GUIDES[GLINK[d.n+'-'+it.s]].kind]))} ›</button>`:''}${(OLINK[d.n+'-'+it.s]||[]).map(k=>`<button class="gbtn ob" type="button" data-opts="${k}">${U('optBtn')}${OLINK[d.n+'-'+it.s].length>1?'：'+esc(L(OPTS[k].t).split('：')[0].split(':')[0]):''} ›</button>`).join('')}</div>
+   <div class="badges"><span class="pill now nowflag">● ${U('ongoing')}</span>${it.must?`<span class="pill must">${U('must')}</span>`:''}${tk?`<span class="pill ${taskState(tk).k}">🎫 ${esc(taskState(tk).txt)}</span>`:''}${it.warn?`<span class="pill warn">⚠️</span>`:''}</div></div><span class="chev">›</span></div>
+   <div class="det"><dl class="kv"><dt>${U('move')}</dt><dd>${esc(L(it.m))}</dd><dt>${U('pay')}</dt><dd>${esc(L(it.p))}</dd>${it.c?`<dt>${U('cost')}</dt><dd class="num">${range(it.c[0],it.c[1])} <span class="muted">（×12 = ${range(it.c[0]*GROUP,it.c[1]*GROUP)}）</span></dd>`:''}${it.addr?`<dt>${U('addr')}</dt><dd><a href="${gmap(it.addr)}" target="_blank" rel="noopener">📍 ${esc(it.addr)}</a></dd>`:''}<dt>${U('note')}</dt><dd>${esc(L(it.n))}</dd></dl>
+   ${it.warn&&tk&&tk.warn?`<div class="alert"><b>⚠️</b> ${esc(L(tk.warn))}</div>`:''}
+   ${it.ph?phraseBtn(it.ph):''}</div></div></div>`;
+ });
+ h+=`</div></section>`;
+ // pack
+ const pk=d.pack;const mine=myState().pack;const done=pk.filter((p,i)=>mine[`${d.n}-${i}`]).length;
+ h+=`<section><div class="sh"><span class="tag" style="--tagc:var(--red)">${U('packT')}</span><span class="sub num" id="packCount">${done} / ${pk.length}</span></div>${syncNote(false)}<div class="chk">${pk.map((p,i)=>{const on=!!mine[`${d.n}-${i}`];return `<label class="${on?'on':''}"><input class="cb" type="checkbox" data-pack="${d.n}-${i}" ${on?'checked':''}><span aria-hidden="true">${p[0]}</span><span class="t">${esc(L(p[1]))}</span>${p[2]?`<span class="pill must">${U('mustBring')}</span>`:''}</label>`}).join('')}</div><div class="bar"><i id="packBar" style="width:${Math.round(done/pk.length*100)}%"></i></div>${teamPack(d)}</section>`;
+ // bingo
+ h+=`<section><div class="sh"><span class="tag" style="--tagc:#C97A12">${U('bingoT')}</span></div><div class="sub muted">${U('dayN',d.n)} · ${U('bingoSub')}</div><div id="bingoWrap"></div><div class="links"><button class="btn y" type="button" id="bShuffle">${U('shuffle')}</button><button class="btn" type="button" id="bClear">${U('clear')}</button></div>${teamBingo(d)}</section>`;
+ // eats
+ if(d.eats&&d.eats.length) h+=`<section><div class="sh"><span class="tag" style="--tagc:#2B7BB9">${U('eatT')}</span></div><div class="card">${d.eats.map(e=>`<div class="eat"><h4>${esc(L(e))}</h4><div class="small muted">${esc(L(e[3]))}</div><div><a class="small" href="${gmap(e[4])}" target="_blank" rel="noopener">📍 ${U('openMap')}</a></div></div>`).join('')}${lang!=='ja'?`<div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">${phraseBtn('table')}${phraseBtn('card')}</div>`:''}</div></section>`;
+ // day tip
+ h+=`<div class="card tipcard"><span class="tiplbl">❄️ ${U('tipLbl')}</span> ${esc(L(DAYTIP[d.n]))}</div>`;
+ // pager
+ h+=`<div class="pager">${d.n>1?`<button class="btn" type="button" data-v="day-${d.n-1}">${U('prev')}</button>`:`<button class="btn" type="button" data-v="overview">${U('back')}</button>`}${d.n<6?`<button class="btn d" type="button" data-v="day-${d.n+1}">${U('next')}</button>`:`<button class="btn d" type="button" data-v="overview">${U('back')}</button>`}</div>`;
+ return h;
+}
+function bingoState(d){
+ let s=myState().bingo[d.n];
+ if(!s||!Array.isArray(s.pick)||s.pick.length!==9){s={pick:[0,1,2,3,4,5,6,7,8],marks:Array(9).fill(false)};}
+ return {pick:[...s.pick],marks:[...(s.marks||Array(9).fill(false))]};
+}
+function saveBingo(d,s){const m=myState();m.bingo[d.n]=s;saveMine(m)}
+const LINES=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+function drawBingo(d){
+ const s=bingoState(d);const win=new Set();let n=0;
+ LINES.forEach(l=>{if(l.every(i=>s.marks[i])){n++;l.forEach(i=>win.add(i))}});
+ document.getElementById('bingoWrap').innerHTML=`<div class="bingo-msg" aria-live="polite">${n?'🎉 '+U('bingoWin',n):''}</div><div class="bingo">${s.pick.map((pi,i)=>{const b=d.bingo[pi];return `<button class="cell${s.marks[i]?(win.has(i)?' win':' on'):''}" type="button" data-cell="${i}" aria-pressed="${s.marks[i]}"><span class="e">${b[0]}</span><span>${esc(L(b[1]))}</span></button>`}).join('')}</div>`;
+}
+function renderSimple(){
+ document.getElementById('hero').innerHTML='';
+ const td=tripStatus().day;
+ let h=`<section><div class="sh"><span class="tag" style="--tagc:#4F6580">${U('simple')}</span><span class="sub">${U('simpleSub2')}</span></div></section>`;
+ h+=statusCard();
+ h+=`<div class="links"><button class="btn y" type="button" data-v="overview" data-hub="1">${U('todoBtn')}</button></div>`;
+ DAYS.forEach(d=>{h+=`<div class="card simple${td===d?' today':''}" style="--day:${d.c}"><button class="sday" type="button" data-v="day-${d.n}"><h2>${d.emo} ${U('dayN',d.n)} · ${d.date.slice(5).replace('-','/')}（${esc(L(d.wd))}） ${L(d.title).replace(/<br>/g,' ')} <span class="muted small">›</span></h2></button>${d.items.map(i=>{const st=itemState(i);return `<div class="srow ${st}"><span class="num">${i.s}–${i.e}</span><span>${st==='now'?`<span class="pill now">● ${U('ongoing')}</span> `:''}${i.ic} ${esc(L(i.t))}${i.c?` <span class="muted num">${range(i.c[0],i.c[1])}</span>`:''}</span></div>`}).join('')}</div>`});
+ return h;
+}
+function render(){
+ document.documentElement.lang=lang==='zh'?'zh-Hant':lang;
+ document.documentElement.setAttribute('lang',lang==='zh'?'zh':lang);
+ document.querySelectorAll('.langs button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.l===lang));
+ document.getElementById('brand').textContent=U('brand');
+ renderTabs();
+ const m=document.getElementById('main');
+ const openIdx=[...document.querySelectorAll('.ti.open')].map(x=>x.dataset.i);const prevView=render._v;render._v=view;
+ let dayObj=null;
+ if(view.startsWith('day-')){dayObj=DAYS[+view.slice(4)-1]}
+ document.documentElement.style.setProperty('--day',dayObj?dayObj.c:'#2B7BB9');
+ if(dayObj){m.innerHTML=renderDay(dayObj);drawBingo(dayObj)}
+ else if(view==='simple'){m.innerHTML=renderSimple()}
+ else{m.innerHTML=renderOverview()}
+ m.insertAdjacentHTML('beforeend',footerHTML());
+ if(prevView===view)openIdx.forEach(i=>{const ti=document.querySelector(`.ti[data-i="${i}"]`);if(ti){ti.classList.add('open');ti.querySelector('.card').setAttribute('aria-expanded','true')}});
+ const fx=document.getElementById('fx');if(fx.hidden||!fx.contains(document.activeElement))renderFx();
+}
+function go(v,scroll){
+ if(!(v==='overview'||v==='simple'||/^day-[1-6]$/.test(v)))v='overview';
+ view=v;if(location.hash!=='#'+v){try{history.replaceState(null,'','#'+v)}catch(e){location.hash=v}}
+ render();if(scroll)window.scrollTo({top:0});
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click',e=>{
+ {const fx=document.getElementById('fx');if(!fx.hidden&&!e.target.closest('#fx,#fxbtn')){fx.hidden=true;document.getElementById('fxbtn').setAttribute('aria-expanded','false')}}
+ const gb=e.target.closest('[data-guide]');if(gb){openGuide(gb.dataset.guide);return}
+ if(e.target.closest('#helpBtn')){openHelp();return}
+ if(e.target.closest('#copyHelp')){const txt='📖 白馬滑雪團網站 使用說明\n\n'+HELP.map((x,i)=>`${x[0]} ${x[1][0]}\n${x[2][0]}`).join('\n\n');const ta=document.getElementById('helpText');ta.value=txt;const msg=document.getElementById('helpMsg');const fb=()=>{ta.hidden=false;ta.focus();ta.select();msg.textContent=U('copyFail')};try{navigator.clipboard.writeText(txt).then(()=>{msg.textContent=U('copied')},fb)}catch(x){fb()}return}
+ if(e.target.closest('#copyLine')){const txt=lineSummary();const ta=document.getElementById('lineText');ta.value=txt;const msg=document.getElementById('copyMsg');
+  const fallback=()=>{ta.hidden=false;ta.focus();ta.select();msg.textContent=U('copyFail')};
+  try{navigator.clipboard.writeText(txt).then(()=>{msg.textContent=U('copied')},fallback)}catch(x){fallback()}return}
+ const ob=e.target.closest('[data-opts]');if(ob){openOpts(ob.dataset.opts);return}
+ const vb=e.target.closest('[data-vote]');if(vb){const m=myState();const k=vb.dataset.vote,i=+vb.dataset.oi;if(m.votes[k]===i)delete m.votes[k];else m.votes[k]=i;saveMine(m);const el=document.getElementById('guide');const st=el.scrollTop;el.innerHTML=optsHTML(k);el.scrollTop=st;return}
+ if(e.target.closest('[data-gclose]')){document.getElementById('guide').hidden=true;render();return}
+ const v=e.target.closest('[data-v]');if(v){go(v.dataset.v,true);if(v.dataset.hub)setTimeout(()=>document.getElementById('todo')?.scrollIntoView({behavior:'smooth'}),50);return}
+ const lb=e.target.closest('.langs button');if(lb){lang=lb.dataset.l;store.set('lang',lang);try{localStorage.setItem('ski-lang',lang)}catch(x){}render();return}
+ const ph=e.target.closest('[data-ph]');if(ph){showPhrase(ph.dataset.ph);return}
+ if(e.target.closest('#ov')){document.getElementById('ov').hidden=true;return}
+ if(e.target.id==='simClear'){simTs=null;render();return}
+ const cell=e.target.closest('[data-cell]');if(cell){const d=DAYS[+view.slice(4)-1];const s=bingoState(d);const i=+cell.dataset.cell;s.marks[i]=!s.marks[i];saveBingo(d,s);render();return}
+ if(e.target.id==='bShuffle'){const d=DAYS[+view.slice(4)-1];const idx=d.bingo.map((_,i)=>i);for(let i=idx.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[idx[i],idx[j]]=[idx[j],idx[i]]}saveBingo(d,{pick:idx.slice(0,9),marks:Array(9).fill(false)});render();return}
+ if(e.target.id==='bClear'){const d=DAYS[+view.slice(4)-1];const s=bingoState(d);s.marks=Array(9).fill(false);saveBingo(d,s);render();return}
+ if(e.target.closest('a,input,label,.det'))return;
+ const card=e.target.closest('.ti .card');if(card){toggleTi(card)}
+ if(e.target.closest('#fxbtn')){const fx=document.getElementById('fx');fx.hidden=!fx.hidden;document.getElementById('fxbtn').setAttribute('aria-expanded',!fx.hidden);if(!fx.hidden)document.getElementById('fxJ').focus();return}
+});
+function toggleTi(card){const ti=card.closest('.ti');ti.classList.toggle('open');card.setAttribute('aria-expanded',ti.classList.contains('open'))}
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'){document.getElementById('ov').hidden=true;document.getElementById('guide').hidden=true;document.getElementById('fx').hidden=true}
+ if((e.key==='Enter'||e.key===' ')&&e.target.matches('.ti .card')){e.preventDefault();toggleTi(e.target)}
+});
+document.addEventListener('change',e=>{
+ const t=e.target;
+ if(t.dataset.task){setTask(t.dataset.task,t.checked);return}
+ if(t.dataset.pack){const m=myState();if(t.checked)m.pack[t.dataset.pack]=true;else delete m.pack[t.dataset.pack];saveMine(m);render();return}
+ if(t.id==='simInput'){if(t.value){simTs=Date.parse(t.value+':00+09:00');const s=tripStatus();if(s.day&&view!=='simple')view='day-'+s.day.n;else if(s.k==='before'||s.k==='after')view='overview';go(view)}return}
+});
+window.addEventListener('hashchange',()=>{const v=location.hash.slice(1);if(v&&v!==view)go(v,true)});
+function showPhrase(id){
+ const p=PH[id];const ov=document.getElementById('ov');
+ ov.innerHTML=`<div class="ja">${esc(p.ja)}</div>${lang!=='ja'?`<div class="mean">${esc(L(p.m))}</div>`:''}<div class="muted small">${U('tapClose')}</div>`;
+ ov.hidden=false;
+}
+
+/* ---------- currency ---------- */
+let rate=store.get('rate',0.21);
+function renderFx(){
+ const fx=document.getElementById('fx');const was=fx.hidden;
+ const j=fx.querySelector('#fxJ')?.value??'1000';
+ fx.innerHTML=`<h3>💱 ${U('fxT')}</h3>
+ <label for="fxR">${U('rate')}<input id="fxR" type="number" step="0.001" min="0" inputmode="decimal" value="${rate}"></label>
+ <label for="fxJ">${U('jpy')}<input id="fxJ" type="number" inputmode="decimal" value="${j}"></label>
+ <label for="fxT">${U('twd')}<input id="fxT" type="number" inputmode="decimal"></label>
+ <div class="q">${[190,1000,3500,8340].map(v=>`<button class="btn sm" type="button" data-fxq="${v}">¥${v.toLocaleString()}</button>`).join('')}</div>`;
+ fx.hidden=was;calc('j');
+}
+function calc(from){
+ const R=document.getElementById('fxR'),J=document.getElementById('fxJ'),T=document.getElementById('fxT');if(!R)return;
+ const r=parseFloat(R.value)||0;
+ if(from==='j'){const v=parseFloat(J.value);T.value=isNaN(v)?'':Math.round(v*r)}
+ else{const v=parseFloat(T.value);J.value=isNaN(v)||!r?'':Math.round(v/r)}
+}
+document.getElementById('fx').addEventListener('input',e=>{
+ if(e.target.id==='fxR'){rate=parseFloat(e.target.value)||0;store.set('rate',rate);calc('j')}
+ if(e.target.id==='fxJ')calc('j');
+ if(e.target.id==='fxT')calc('t');
+});
+document.getElementById('fx').addEventListener('click',e=>{const q=e.target.closest('[data-fxq]');if(q){document.getElementById('fxJ').value=q.dataset.fxq;calc('j')}});
+
+/* ---------- boot ---------- */
+try{const q=new URLSearchParams(location.search);const ql=(q.get('lang')||'').toLowerCase();if(ql){lang=ql.startsWith('ja')?'ja':ql.startsWith('en')?'en':'zh'}const qd=q.get('day');if(qd&&/^[1-6]$/.test(qd)&&!location.hash)history.replaceState(null,'','#day-'+qd);}catch(e){}
+const h0=location.hash.slice(1);
+if(h0)view=h0;else view='simple';
+go(view);
+if(!store.get('helpSeen',false))openHelp();
+initSync().catch(()=>{});
+setInterval(()=>{if(simTs==null&&document.getElementById("ov").hidden&&!document.querySelector(".ti.open")&&!document.activeElement?.matches("input"))render()},60000);
+})();
+</script>
+
+</body>
+</html>
